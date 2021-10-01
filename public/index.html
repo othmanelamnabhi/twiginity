@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="./twitter.js" defer></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+      defer
+    ></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- Set up a form with paragraph input that is gonna take in the tweet -->
+    <form method="post" class="postTweet">
+      <textarea
+        id="tweet"
+        name="user_message"
+        placeholder="What's happening?"
+      ></textarea>
+
+      <button type="submit">Tweet</button>
+    </form>
+    <!-- Set up a form with "age of tweet to delete", "Only tweets containing this word/phrase", "Run this task" -->
+    <form method="post" class="deleteTweets">
+      <label for="age-of-tweets">Age of tweet to delete</label>
+      <select name="age_of_tweets" id="age-of-tweets">
+        <option value="oneweek">One week</option>
+        <option value="twoweeks">Two weeks</option>
+        <option value="threeweeks">Three weeks</option>
+      </select>
+
+      <label for="keyword">Only tweets contaning this word/phrase</label
+      ><input type="text" name="keyword" id="keyword" />
+
+      <label for="taskSchedule"></label
+      ><select name="taskSchedule" id="taskSchedule">
+        <option value="2">Every 2 minutes</option>
+        <option value="3">Every 3 minutes</option>
+      </select>
+
+      <button type="submit">Delete my tweets</button>
+    </form>
+  </body>
+</html>
