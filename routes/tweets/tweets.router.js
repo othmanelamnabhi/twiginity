@@ -5,7 +5,22 @@
 
 // DELETE TWEETS (features)
 //  Fetch last 3200 tweets
-// (LATER)
+//  Be mindful of the pagination
+//  Store them in an ARRAY
+//  Loop through the array and delete each one
+// (later) Fetch tweets older than a certain date
+// (LATER) Add progress indicator for deletion and maybe for fetching
+// (LATER) Delete only tweets containing a certain keyword or phrase
+
+// (LATER) Tweets scheduling feature
+//  Post tweet route is gonna take in another argument that is DATE and TIME
+//  If DATE argument is NOT NULL then schedule tweet
+
+// DRAFTS SECTIONS (schedule tweets) (if can store and fetch drafts from twitter)
+
+// HISTORY SECTION
+
+// MENTIONS SECTION
 
 const express = require("express");
 const twitter = require("twitter-text");
