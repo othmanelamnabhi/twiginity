@@ -8,6 +8,7 @@ require("./auth/twitter-api-authentication");
 const httpToHttpsRedirect = require("./helpers/httptohttpsredirect");
 const app = express();
 const authRouter = require("./routes/auth/auth.router");
+const tweetsRouter = require("./routes/tweets/tweets.router");
 
 app.use(morgan("combined"));
 
@@ -32,5 +33,6 @@ app.use(passport.session());
 
 app.use(express.json());
 app.use("/auth", authRouter);
+app.use("/tweets", tweetsRouter);
 
 module.exports = app;
