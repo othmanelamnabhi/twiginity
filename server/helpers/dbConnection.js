@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const MONGODB_URL = `mongodb+srv://tbe-admin:${process.env.MONGODB_PASSWORD}@twitter-brand-enhancer.fdmsb.mongodb.net/twitterBrandEnhancer?retryWrites=true&w=majority`;
+const MONGODB_URL = process.env.MONGODB_URL;
 
 async function connectToDatabase() {
   await mongoose.connect(MONGODB_URL);
