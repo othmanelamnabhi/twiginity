@@ -17,6 +17,7 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "mongoose": "^6.0.8",
+    "node-schedule": "^2.0.0",
     "passport": "^0.5.0",
     "passport-twitter": "^1.0.4",
     "twitter-api-v2": "^1.5.2",

@@ -24,18 +24,12 @@
 
 const express = require("express");
 const { postTweet, scheduleTweet } = require("./tweets.controller");
-const twitterClient = require("../../auth/twitterClient");
 const isAuthenticated = require("../../helpers/isAuthenticated");
 
 const tweetsRouter = express.Router();
 
-tweetsRouter.post("/post-tweet", isAuthenticated, twitterClient, postTweet);
+tweetsRouter.post("/post-tweet", isAuthenticated, postTweet);
 
-tweetsRouter.post(
-  "/schedule-tweet",
-  isAuthenticated,
-  twitterClient,
-  scheduleTweet
-);
+tweetsRouter.post("/schedule-tweet", isAuthenticated, scheduleTweet);
 
 module.exports = tweetsRouter;
