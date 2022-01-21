@@ -4,23 +4,15 @@ const http = require("http");
 const https = require("https");
 const connectToDatabase = require("./helpers/dbConnection");
 
-const {
-  HTTPS_OPTIONS,
-  HTTPS_PORT,
-  HTTP_PORT,
-} = require("./helpers/serverConfig");
+const { HTTPS_OPTIONS, HTTPS_PORT, HTTP_PORT } = require("./helpers/serverConfig");
 const app = require("./app");
 
 const server = http.createServer(app);
 const httpsServer = https.createServer(HTTPS_OPTIONS, app);
 
-exports.scheduledTweetsQueue = [];
-
 async function startServer() {
   try {
     await connectToDatabase();
-
-    // load all queued jobs upon server restart or startup
 
     server.listen(HTTP_PORT, () => {
       console.log(`Example app listening at http://localhost:${HTTP_PORT}`);

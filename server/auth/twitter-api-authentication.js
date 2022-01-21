@@ -4,13 +4,13 @@ const { Strategy } = require("passport-twitter");
 const User = require("../models/user.model");
 
 passport.serializeUser(function (user, done) {
-  console.log("serialize", user);
+  console.log("serialize", user, user.id);
   done(null, user.id);
 });
 
 passport.deserializeUser(function (id, done) {
   User.findById({ _id: id }, (err, user) => {
-    console.log("deserialize", user);
+    console.log("deserialize", user, id);
     if (err) return done(err);
     done(null, user);
   });

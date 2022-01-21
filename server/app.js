@@ -13,13 +13,19 @@ const tweetsRouter = require("./routes/tweets/tweets.router");
 app.use(morgan("combined"));
 
 // Secure the app with Helmet
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
+
+// Middleware to handle HTTP to HTTPS redirects on all requests
 app.all("*", httpToHttpsRedirect);
 
 app.use(
   cookieSession({
     maxAge: 60 * 60 * 24 * 1000,
-    keys: ["code1", "code2"],
+    keys: ["code1", "code2"], // store those in .env file
     name: "session",
   })
 );
@@ -28,8 +34,6 @@ app.use(express.static("public"));
 app.use(passport.initialize());
 
 app.use(passport.session());
-
-// Middleware to handle HTTP to HTTPS redirects on all requests
 
 app.use(express.json());
 app.use("/auth", authRouter);

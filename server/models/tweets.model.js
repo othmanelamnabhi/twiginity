@@ -2,10 +2,6 @@ const schedule = require("node-schedule");
 const { TwitterApi } = require("twitter-api-v2");
 const User = require("../models/user.model");
 
-// create orginal Class
-// create class for scheduled tweets
-// create class for tweets to be posted immediatly
-
 class Tweet {
   constructor(id, tweet, twitterId) {
     this.id = id;
@@ -36,7 +32,7 @@ class ScheduledTweet extends Tweet {
           accessSecret: accessTokenSecret,
         });
 
-        await twitterClient.v1.tweet(self.tweet);
+        await twitterClient.v2.tweet(self.tweet);
         console.log(
           `tweet with ID: ${self.id} from user ${self.twitterId} is posted successfully`
         );
@@ -70,7 +66,7 @@ class PostedTweet extends Tweet {
       accessSecret: accessTokenSecret,
     });
 
-    return await twitterClient.v1.tweet(self.tweet);
+    return await twitterClient.v2.tweet(self.tweet);
   }
 
   async fetchUserTokens(twitterId) {
