@@ -17,7 +17,7 @@ const tweetsRouter = express.Router();
 
 tweetsRouter.delete("/delete-tweets", twitterClient, isAuthenticated, deleteTweets);
 
-tweetsRouter.delete(
+tweetsRouter.post(
   "/delete-tweets-json",
   [twitterClient, isAuthenticated, fileUpload()],
   deleteTweetsFromJson

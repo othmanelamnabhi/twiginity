@@ -2,6 +2,9 @@ const twitter = require("twitter-text");
 const Job = require("../../models/jobs.model");
 const server = require("../../server");
 const { TwitterApi } = require("twitter-api-v2");
+const path = require("path");
+
+path.join();
 
 async function deleteTweets(req, res) {
   olderThan = req.body.time;
@@ -43,7 +46,7 @@ async function deleteTweetsFromJson(req, res) {
 
   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
   sampleFile = req.files.sampleFile;
-  uploadPath = __dirname + sampleFile.name;
+  uploadPath = path.join(__dirname, "..", "..", "tmp", sampleFile.name);
 
   // Use the mv() method to place the file somewhere on your server
   sampleFile.mv(uploadPath, function (err) {

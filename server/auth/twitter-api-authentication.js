@@ -21,14 +21,15 @@ passport.use(
     {
       consumerKey: process.env.API_KEY,
       consumerSecret: process.env.API_SECRET_KEY,
-      callbackURL: "/auth/callback",
+      callbackURL: "/auth/twitter/redirect",
     },
     function (token, tokenSecret, profile, done) {
       User.findOne({ twitterId: profile.id }, async function (err, user) {
         console.log("We're in the strategy");
         if (err) return done(err);
+
+        const fullSizeProPic = profile.photos[0].value.replace("_normal", "");
         if (!user) {
-          const fullSizeProPic = profile.photos[0].value.replace("_normal", "");
           const newUser = await new User({
             twitterId: profile.id,
             username: profile.username,
@@ -57,6 +58,8 @@ passport.use(
 
           console.log("Tokens updated");
         }
+        user.profilePicture = fullSizeProPic;
+        await user.save();
         console.log("User already exists");
         done(null, user);
       });
