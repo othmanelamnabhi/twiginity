@@ -127,5 +127,6 @@ TODO.txt
 cert.pem
 key.pem
 .DS_Store
+test.js
 
 # End of https://www.toptal.com/developers/gitignore/api/node
