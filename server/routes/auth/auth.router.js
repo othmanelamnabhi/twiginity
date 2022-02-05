@@ -21,12 +21,9 @@ authRouter.get("/login/success", (req, res) => {
       message: "user has successfully authenticated",
       user: req.user,
     });
+  } else {
+    res.redirect("/auth/login/failed");
   }
-
-  return res.status(401).json({
-    success: false,
-    message: "user failed to authenticate.",
-  });
 });
 
 authRouter.get("/login/failed", (req, res) => {
@@ -39,8 +36,8 @@ authRouter.get("/login/failed", (req, res) => {
 authRouter.get(
   "/twitter/redirect",
   passport.authenticate("twitter", {
-    successRedirect: "https://127.0.0.1:3000",
-    failureRedirect: "/auth/login/failed",
+    successRedirect: "https://127.0.0.1:3000/delete-recent",
+    failureRedirect: "https://127.0.0.1:3000",
   })
 );
 

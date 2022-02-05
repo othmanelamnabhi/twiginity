@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import "./App.css";
 
-import { Drawer, Toolbar } from "@mui/material";
+import { Drawer, Toolbar, Button } from "@mui/material";
+import { Twitter } from "@mui/icons-material";
 
 import UnauthenticatedHome from "./components/UnauthenticatedHome";
 import DeleteRecentTweets from "./components/DeleteRecentTweets";
 import DeleteEverything from "./components/DeleteEverything";
 import DrawerAvatar from "./components/DrawerAvatar";
 import { DrawerAuthenticated } from "./components/DrawerAuthenticatedMenuItems";
-import { DrawerUnauthenticated } from "./components/DrawerUnauthenticatedMenuItems";
 
 import { useAuth } from "./components/AuthProvider";
 
-const drawerWidth = 300;
+const drawerWidth = 400;
 
 function App() {
   const [nestedListUnfolded, setNestedListUnfolded] = useState(true);
 
-  const { authenticatedUser: user } = useAuth();
+  const { authenticatedUser: user, handleSignInClick } = useAuth();
 
   function handleClick() {
     setNestedListUnfolded((nestedListUnfolded) => !nestedListUnfolded);
@@ -33,6 +34,7 @@ function App() {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               boxSizing: "border-box",
+              backgroundColor: "#D62246",
             },
           }}
           variant='permanent'
@@ -46,7 +48,16 @@ function App() {
               nestedListState={nestedListUnfolded}
             />
           ) : (
-            <DrawerUnauthenticated />
+            <Button
+              variant='contained'
+              startIcon={<Twitter />}
+              onClick={handleSignInClick}
+              sx={{
+                backgroundColor: "#1DA1F2",
+              }}
+              size='large'>
+              Sign in with Twitter
+            </Button>
           )}
         </Drawer>
       </div>
@@ -55,9 +66,9 @@ function App() {
         style={{
           backgroundColor: "#202020",
           flexGrow: 1,
-          paddingTop: "40px",
           minHeight: "100vh",
         }}>
+        <Toolbar />
         <Routes>
           <Route exact path='/' element={<UnauthenticatedHome authdata={user} />} />
           <Route exact path='/delete-recent' element={<DeleteRecentTweets />} />

@@ -1,45 +1,53 @@
+import { Container, Alert, FormControl, Grid, Stack } from "@mui/material";
 import {
-  Container,
-  Typography,
-  Alert,
-  TextField,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Checkbox,
-  Button,
-} from "@mui/material";
+  WhiteFormLabel,
+  CustomH2,
+  CustomTextField,
+  CustomCheckbox,
+  CustomFormControlLabel,
+  CustomButton,
+} from "./StyledComponents";
 import { Delete } from "@mui/icons-material";
 
 export default function DeleteEverything() {
   return (
-    <Container>
-      <Typography variant='h1'>Delete everything</Typography>
-      <ul>
-        <li>Submit your Twitter data file for processing to delete more tweets</li>
-        <li>
-          Please read the upload instructions for details on where to get this file from.
-        </li>
-      </ul>
-      <Alert severity='warning' variant='filled'>
-        With Twitter API v2 now released, the rate limits have been drastically reduced.
-        on v1.1 you could delete thousands of tweets whereas now, you’re limited to 50
-        tweets every 15 minutes.
-      </Alert>
-      <form>
-        <FormControl fullWidth>
-          <FormLabel>Upload your “tweet.js” here.</FormLabel>
-          <TextField type='file' />
-        </FormControl>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={1}></Grid>
+      <Grid item xs={12} md={6}>
+        <Container>
+          <Stack spacing={5}>
+            <CustomH2 variant='h2'>Delete everything</CustomH2>
+            <ul className='li-spacing white'>
+              <li>Submit your Twitter data file for processing to delete more tweets.</li>
+              <li>
+                Please read the upload instructions for details on where to get this file
+                from.
+              </li>
+            </ul>
+            <Alert severity='warning' variant='filled'>
+              With Twitter API v2 now released, the new rate limits will render the
+              "delete" feature of this app almost useless. So use it while you can !
+            </Alert>
+            <form>
+              <Stack spacing={5}>
+                <FormControl fullWidth>
+                  <WhiteFormLabel>Upload your “tweet.js” here.</WhiteFormLabel>
+                  <CustomTextField type='file' />
+                </FormControl>
 
-        <FormControlLabel
-          control={<Checkbox />}
-          label='I understand deleted tweets cannot be recovered.'
-        />
-        <Button variant='contained' startIcon={<Delete />}>
-          Delete
-        </Button>
-      </form>
-    </Container>
+                <CustomFormControlLabel
+                  control={<CustomCheckbox />}
+                  label='I understand deleted tweets cannot be recovered.'
+                />
+                <CustomButton variant='contained' startIcon={<Delete />}>
+                  Delete
+                </CustomButton>
+              </Stack>
+            </form>
+          </Stack>
+        </Container>
+      </Grid>
+      <Grid item xs={12} md={5}></Grid>
+    </Grid>
   );
 }

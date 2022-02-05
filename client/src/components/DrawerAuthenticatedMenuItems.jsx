@@ -19,10 +19,10 @@ import { useAuth } from "./AuthProvider";
 export const DrawerAuthenticated = ({ handleClick, nestedListState }) => {
   const { handleLogoutClick } = useAuth();
   return (
-    <List>
+    <List sx={{ color: "white" }}>
       <ListItemButton onClick={handleClick}>
         <ListItemIcon>
-          <DeleteIcon />
+          <DeleteIcon sx={{ color: "white" }} />
         </ListItemIcon>
         <ListItemText primary='Delete Tweets' />
         {nestedListState ? <ExpandLess /> : <ExpandMore />}
@@ -31,13 +31,13 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState }) => {
         <List component='div' disablePadding>
           <ListItemButton sx={{ pl: 4 }} to='/delete-recent' component={RouterLink}>
             <ListItemIcon>
-              <AutoDeleteIcon />
+              <AutoDeleteIcon sx={{ color: "white" }} />
             </ListItemIcon>
             <ListItemText primary='Most Recent' />
           </ListItemButton>
           <ListItemButton sx={{ pl: 4 }} to='/delete-everything' component={RouterLink}>
             <ListItemIcon>
-              <DeleteForeverIcon />
+              <DeleteForeverIcon sx={{ color: "white" }} />
             </ListItemIcon>
             <ListItemText primary='Everything' />
           </ListItemButton>
@@ -45,7 +45,7 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState }) => {
       </Collapse>
       <ListItemButton onClick={handleLogoutClick}>
         <ListItemIcon>
-          <LogoutIcon />
+          <LogoutIcon sx={{ color: "white" }} />
         </ListItemIcon>
         <ListItemText primary={"Logout"} />
       </ListItemButton>
