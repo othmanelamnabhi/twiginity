@@ -16,8 +16,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 
-export const DrawerAuthenticated = ({ handleClick, nestedListState }) => {
+export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetState }) => {
   const { handleLogoutClick } = useAuth();
+
   return (
     <List sx={{ color: "white" }}>
       <ListItemButton onClick={handleClick}>
@@ -29,13 +30,21 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState }) => {
       </ListItemButton>
       <Collapse in={nestedListState} timeout='auto' unmountOnExit>
         <List component='div' disablePadding>
-          <ListItemButton sx={{ pl: 4 }} to='/delete-recent' component={RouterLink}>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            to='/delete-recent'
+            component={RouterLink}
+            onClick={drawerSetState}>
             <ListItemIcon>
               <AutoDeleteIcon sx={{ color: "white" }} />
             </ListItemIcon>
             <ListItemText primary='Most Recent' />
           </ListItemButton>
-          <ListItemButton sx={{ pl: 4 }} to='/delete-everything' component={RouterLink}>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            to='/delete-everything'
+            component={RouterLink}
+            onClick={drawerSetState}>
             <ListItemIcon>
               <DeleteForeverIcon sx={{ color: "white" }} />
             </ListItemIcon>

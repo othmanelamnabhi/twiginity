@@ -12,11 +12,24 @@ import { Delete } from "@mui/icons-material";
 export default function DeleteEverything() {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={1}></Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={1} xl={1}></Grid>
+      <Grid item xs={12} md={10} xl={7}>
         <Container>
           <Stack spacing={5}>
-            <CustomH2 variant='h2'>Delete everything</CustomH2>
+            <CustomH2
+              variant='h2'
+              sx={{
+                fontSize: {
+                  xs: "2em",
+                  md: "3.75em",
+                },
+                textAlign: {
+                  xs: "center",
+                  md: "initial",
+                },
+              }}>
+              Delete everything
+            </CustomH2>
             <ul className='li-spacing white'>
               <li>Submit your Twitter data file for processing to delete more tweets.</li>
               <li>
@@ -47,7 +60,7 @@ export default function DeleteEverything() {
           </Stack>
         </Container>
       </Grid>
-      <Grid item xs={12} md={5}></Grid>
+      <Grid item xs={12} md={1} xl={4}></Grid>
     </Grid>
   );
 }

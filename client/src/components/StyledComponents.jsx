@@ -5,6 +5,7 @@ import {
   FormLabel,
   TextField,
   Typography,
+  Toolbar,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 import { styled } from "@mui/system";
@@ -48,6 +49,14 @@ const CustomButton = styled(Button)({
   },
 });
 
+const CustomToolbar = styled(Toolbar)(({ theme }) => ({
+  // alignItems: 'flex-start',
+  // Override media queries injected by theme.mixins.toolbar
+  "@media all": {
+    minHeight: 90,
+  },
+}));
+
 export {
   WhiteFormLabel,
   CustomH2,
@@ -55,4 +64,5 @@ export {
   CustomCheckbox,
   CustomFormControlLabel,
   CustomButton,
+  CustomToolbar,
 };

@@ -58,11 +58,24 @@ export default function DeleteRecentTweets() {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={1}></Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={1} xl={1}></Grid>
+      <Grid item xs={12} md={10} xl={7}>
         <Container>
           <Stack spacing={5}>
-            <CustomH2 variant='h2'>Delete recent tweets</CustomH2>
+            <CustomH2
+              variant='h2'
+              sx={{
+                fontSize: {
+                  xs: "2em",
+                  md: "3.75em",
+                },
+                textAlign: {
+                  xs: "center",
+                  md: "initial",
+                },
+              }}>
+              Delete recent tweets
+            </CustomH2>
             <ul className='white li-spacing'>
               <li>Deletes up to 3,200 of your most recent tweets (limitations).</li>
               <li>
@@ -113,7 +126,7 @@ export default function DeleteRecentTweets() {
           </Stack>
         </Container>
       </Grid>
-      <Grid item xs={12} md={5}></Grid>
+      <Grid item xs={12} md={1} xl={4}></Grid>
     </Grid>
   );
 }

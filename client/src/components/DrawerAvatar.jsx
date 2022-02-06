@@ -16,7 +16,15 @@ export default function DrawerAvatar({ authdata: { authenticated, user, error } 
       />
       <Typography
         variant='h4'
-        sx={{ width: "80%", textAlign: "center", color: "white" }}
+        sx={{
+          width: "80%",
+          textAlign: "center",
+          color: "white",
+          fontSize: {
+            xs: "1.7em",
+            md: "2.125em",
+          },
+        }}
         marginTop={2}
         noWrap>
         {authenticated ? `@${user.username}` : "Twiginity"}

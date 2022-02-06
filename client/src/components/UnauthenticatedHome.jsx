@@ -9,11 +9,22 @@ export default function UnauthenticatedHome({ authdata: { authenticated } }) {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={1}></Grid>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={1} xl={1}></Grid>
+      <Grid item xs={12} md={10} xl={7}>
         <Container>
-          <Stack spacing={4}>
-            <CustomH2 variant='h2'>
+          <Stack spacing={5}>
+            <CustomH2
+              variant='h2'
+              sx={{
+                fontSize: {
+                  xs: "2em",
+                  md: "2.5em",
+                },
+                textAlign: {
+                  xs: "center",
+                  md: "initial",
+                },
+              }}>
               Delete tweets from your Twitter feed in bulk to protect your privacy or make
               a fresh start.
             </CustomH2>
@@ -46,7 +57,7 @@ export default function UnauthenticatedHome({ authdata: { authenticated } }) {
           </Stack>
         </Container>
       </Grid>
-      <Grid item xs={12} md={5}></Grid>
+      <Grid item xs={12} md={1} xl={4}></Grid>
     </Grid>
   );
 }
