@@ -1,3 +1,5 @@
+import { Link as RouterLink } from "react-router-dom";
+
 import {
   ListItemIcon,
   ListItemButton,
@@ -13,7 +15,6 @@ import AutoDeleteIcon from "@mui/icons-material/AutoDelete";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 
 export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetState }) => {

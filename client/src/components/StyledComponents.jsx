@@ -50,8 +50,6 @@ const CustomButton = styled(Button)({
 });
 
 const CustomToolbar = styled(Toolbar)(({ theme }) => ({
-  // alignItems: 'flex-start',
-  // Override media queries injected by theme.mixins.toolbar
   "@media all": {
     minHeight: 90,
   },

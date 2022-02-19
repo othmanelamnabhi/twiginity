@@ -4,8 +4,11 @@ import { Twitter } from "@mui/icons-material";
 import { useAuth } from "./AuthProvider";
 import { CustomH2 } from "./StyledComponents";
 
-export default function UnauthenticatedHome({ authdata: { authenticated } }) {
-  const { handleSignInClick } = useAuth();
+export default function UnauthenticatedHome() {
+  const {
+    handleSignInClick,
+    authenticatedUser: { authenticated },
+  } = useAuth();
 
   return (
     <Grid container spacing={2}>

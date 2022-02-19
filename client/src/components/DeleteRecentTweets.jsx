@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
+import axios from "axios";
 
 import { Container, FormControl, Grid, Stack, Alert } from "@mui/material";
 import { Delete } from "@mui/icons-material";
@@ -11,46 +12,71 @@ import {
   CustomButton,
 } from "./StyledComponents";
 
-// grab timezone
-// transform time into right format
+import { deletionState, reducer } from "./DeleteEverything";
 
 const tweetAgeValues = [
   {
-    value: "1",
+    value: "604800000",
     label: "Tweets older than one week",
   },
   {
-    value: "2",
+    value: "1209600000",
     label: "Tweets older than two weeks",
   },
   {
-    value: "3",
+    value: "2592000000",
     label: "Tweets older than one month",
   },
   {
-    value: "4",
+    value: "5184000000",
     label: "Tweets older than two months",
   },
   {
-    value: "5",
+    value: "7776000000",
     label: "Tweets older than three months",
   },
   {
-    value: "6",
+    value: "15552000000",
     label: "Tweets older than six months",
   },
   {
-    value: "7",
+    value: "31536000000",
     label: "Tweets older than one year",
   },
   {
-    value: "8",
+    value: "",
     label: "All my tweets",
   },
 ];
 
 export default function DeleteRecentTweets() {
   const [tweetAge, setTweetAge] = useState("Tweets older than one week");
+  const [state, setState] = useReducer(reducer);
+
+  console.log("state right now => ", state);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const timeNow = new Date().getTime();
+    const timeToSubstract = Number(event.target.elements.tweetAge.value);
+    const pastTime = new Date(timeNow - timeToSubstract)
+      .toISOString()
+      .replace(/\.[0-9]{3}/, "");
+    const keyword = event.target.elements.tweetKeyword.value;
+
+    axios
+      .delete("/tweets/delete-recent-tweets", {
+        data: { time: pastTime, keyword },
+        withCredentials: true,
+      })
+      .then((response) => {
+        return;
+      }) // setState saying how many tweets are about to be processed
+      .catch((error) =>
+        setState({ type: deletionState.error, message: error.response.data.message })
+      );
+  };
 
   const handleChange = (event) => {
     setTweetAge(event.target.value);
@@ -87,14 +113,14 @@ export default function DeleteRecentTweets() {
               With Twitter API v2 now released, the new rate limits will render the
               "delete" feature of this app almost useless. So use it while you can !
             </Alert>
-            <form>
+            <form onSubmit={handleSubmit}>
               <Stack spacing={5}>
                 <FormControl fullWidth>
                   <WhiteFormLabel sx={{ color: "white" }}>
                     Age of tweets to delete
                   </WhiteFormLabel>
                   <CustomTextField
-                    id='outlined-select-currency-native'
+                    id='tweetAge'
                     select
                     value={tweetAge}
                     onChange={handleChange}
@@ -111,14 +137,17 @@ export default function DeleteRecentTweets() {
 
                 <FormControl fullWidth>
                   <WhiteFormLabel>Only tweets containing this word/phrase</WhiteFormLabel>
-                  <CustomTextField helperText='Leave blank to delete all tweets matching the age above.' />
+                  <CustomTextField
+                    helperText='Leave blank to delete all tweets matching the age above.'
+                    id='tweetKeyword'
+                  />
                 </FormControl>
 
                 <CustomFormControlLabel
-                  control={<CustomCheckbox />}
+                  control={<CustomCheckbox id='acceptTerms' required />}
                   label='I understand deleted tweets cannot be recovered.'
                 />
-                <CustomButton variant='contained' startIcon={<Delete />}>
+                <CustomButton variant='contained' startIcon={<Delete />} type='submit'>
                   Delete
                 </CustomButton>
               </Stack>

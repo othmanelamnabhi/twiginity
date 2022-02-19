@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import { Navigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
@@ -23,10 +24,11 @@ export function AuthProvider({ children }) {
         throw new Error("failed to authenticate user");
       })
       .then((responseJson) => {
-        setAuthenticatedUser({
+        const authInfo = {
           authenticated: true,
           user: responseJson.user,
-        });
+        };
+        setAuthenticatedUser(authInfo);
       })
       .catch((error) => {
         setAuthenticatedUser({
@@ -59,4 +61,20 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   return useContext(AuthContext);
+}
+
+export function RequireAuth({ children }) {
+  let {
+    authenticatedUser: { authenticated },
+  } = useAuth();
+
+  if (!authenticated) {
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Navigate to='/' />;
+  }
+
+  return children;
 }

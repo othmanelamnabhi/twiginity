@@ -4,7 +4,6 @@ const helmet = require("helmet");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const cors = require("cors");
-const cookieParser = require("cookie-parser"); // parse cookie header
 
 require("./auth/twitter-api-authentication");
 
@@ -24,14 +23,11 @@ app.all("*", httpToHttpsRedirect);
 app.use(
   cookieSession({
     maxAge: 60 * 60 * 24 * 1000,
-    keys: ["code1", "code2"], // store those in .env file
+    keys: JSON.parse(process.env.cookieKeys), // store those in .env file
     name: "session",
   })
 );
 
-// app.use(cookieParser());
-
-// app.use(express.static("public"));
 app.use(passport.initialize());
 
 app.use(passport.session());
@@ -60,15 +56,10 @@ const authCheck = (req, res, next) => {
   }
 };
 
-// if it's already login, send the profile response,
-// otherwise, send a 401 response that the user is not authenticated
-// authCheck before navigating to home page
 app.get("/", authCheck, (req, res) => {
   res.status(200).json({
     authenticated: true,
     message: "user successfully authenticated",
-    user: req.user,
-    cookies: req.cookies,
   });
 });
 

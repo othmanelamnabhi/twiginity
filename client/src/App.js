@@ -2,67 +2,24 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import {
-  Drawer,
-  Button,
-  Box,
-  AppBar,
-  Typography,
-  IconButton,
-  Avatar,
-} from "@mui/material";
+import { Drawer, Box, AppBar, Typography, IconButton, Avatar } from "@mui/material";
 import { CustomToolbar } from "./components/StyledComponents";
-import { Twitter, Menu } from "@mui/icons-material";
+import { Menu } from "@mui/icons-material";
 
 import UnauthenticatedHome from "./components/UnauthenticatedHome";
 import DeleteRecentTweets from "./components/DeleteRecentTweets";
 import DeleteEverything from "./components/DeleteEverything";
-import DrawerAvatar from "./components/DrawerAvatar";
-import { DrawerAuthenticated } from "./components/DrawerAuthenticatedMenuItems";
+import { ContentForDrawers } from "./components/ContentForDrawers";
 
-import { useAuth } from "./components/AuthProvider";
+import { useAuth, RequireAuth } from "./components/AuthProvider";
 
 const drawerWidth = 400;
-
-const ContentForDrawers = ({
-  user,
-  handleClick,
-  handleSignInClick,
-  nestedListUnfolded,
-  drawerSetState = null,
-}) => {
-  return (
-    <>
-      <CustomToolbar />
-      <DrawerAvatar authdata={user} />
-
-      {user?.authenticated ? (
-        <DrawerAuthenticated
-          handleClick={handleClick}
-          nestedListState={nestedListUnfolded}
-          drawerSetState={drawerSetState}
-        />
-      ) : (
-        <Button
-          variant='contained'
-          startIcon={<Twitter />}
-          onClick={handleSignInClick}
-          sx={{
-            backgroundColor: "#1DA1F2",
-          }}
-          size='large'>
-          Sign in with Twitter
-        </Button>
-      )}
-    </>
-  );
-};
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [nestedListUnfolded, setNestedListUnfolded] = useState(true);
 
-  const { authenticatedUser: user, handleSignInClick } = useAuth();
+  const { authenticatedUser: user } = useAuth();
 
   function handleDrawerToggle() {
     setMobileOpen((mobileOpen) => !mobileOpen);
@@ -121,8 +78,6 @@ function App() {
         variant='temporary'
         anchor='left'>
         <ContentForDrawers
-          handleSignInClick={handleSignInClick}
-          user={user}
           handleClick={handleClick}
           nestedListUnfolded={nestedListUnfolded}
           drawerSetState={handleDrawerToggle}
@@ -145,8 +100,6 @@ function App() {
         }}
         open>
         <ContentForDrawers
-          handleSignInClick={handleSignInClick}
-          user={user}
           handleClick={handleClick}
           nestedListUnfolded={nestedListUnfolded}
         />
@@ -160,9 +113,25 @@ function App() {
         }}>
         <CustomToolbar />
         <Routes>
-          <Route exact path='/' element={<UnauthenticatedHome authdata={user} />} />
-          <Route exact path='/delete-recent' element={<DeleteRecentTweets />} />
-          <Route exact path='/delete-everything' element={<DeleteEverything />} />
+          <Route exact path='/' element={<UnauthenticatedHome />} />
+          <Route
+            exact
+            path='/delete-recent'
+            element={
+              <RequireAuth>
+                <DeleteRecentTweets />
+              </RequireAuth>
+            }
+          />
+          <Route
+            exact
+            path='/delete-everything'
+            element={
+              <RequireAuth>
+                <DeleteEverything />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </Box>
     </div>

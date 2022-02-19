@@ -1,7 +1,12 @@
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
+import { useAuth } from "./AuthProvider";
 
-export default function DrawerAvatar({ authdata: { authenticated, user, error } }) {
+export default function DrawerAvatar() {
+  const {
+    authenticatedUser: { user, authenticated },
+  } = useAuth();
+
   return (
     <div
       style={{
