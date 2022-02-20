@@ -123,12 +123,6 @@ dist
 .pnp.*
 
 
-TODO.txt
-cert.pem
-key.pem
-.DS_Store
-test.js
-
 ### macOS ###
 # General
 .DS_Store
@@ -157,5 +151,13 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+log.txt
+tmp/
+TODO.txt
+cert.pem
+key.pem
+.DS_Store
+test.js
 
 # End of https://www.toptal.com/developers/gitignore/api/node

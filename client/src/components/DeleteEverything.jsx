@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useReducer } from "react";
-import { io } from "socket.io-client";
 
 import { Container, Alert, Grid, Stack } from "@mui/material";
 import { Delete } from "@mui/icons-material";
@@ -49,12 +48,9 @@ export function reducer(
 
 export default function DeleteEverything() {
   const [state, setState] = useReducer(reducer);
-  const {
-    authenticatedUser: {
-      user: { twitterId },
-    },
-  } = useAuth();
+  const { socket } = useAuth();
 
+  console.log("DeleteEverything => state update");
   console.log("state right now => ", state);
 
   const handleSubmit = async (event) => {
@@ -66,22 +62,26 @@ export default function DeleteEverything() {
         data: { filename },
         withCredentials: true,
       })
+      .then((response) => {
+        setState(response.data);
+      })
       .catch((error) =>
         setState({ type: deletionState.error, message: error.response.data.message })
       );
   };
 
   useEffect(() => {
-    const socket = io(`https://127.0.0.1:5001?twitterId=${twitterId}`); // solve the proxying issue for socket.io
+    if (!socket) return;
+    socket.connect();
 
     socket.on("connect", () => {
       console.log("socket.io client connected! => ", socket.id);
     });
 
-    socket.on(deletionState.processing, (data) => {
-      console.log("socket ID => ", socket.id);
-      setState(data);
-    });
+    // socket.on(deletionState.processing, (data) => {
+    //   console.log("socket ID => ", socket.id);
+    //   setState(data);
+    // });
 
     socket.on(deletionState.deleting, (data) => {
       console.log("socket ID => ", socket.id);
@@ -89,9 +89,9 @@ export default function DeleteEverything() {
     });
 
     return () => {
-      socket.disconnect();
+      socket.removeAllListeners();
     };
-  }, [twitterId]);
+  }, [socket]);
 
   return (
     <Grid container spacing={2}>

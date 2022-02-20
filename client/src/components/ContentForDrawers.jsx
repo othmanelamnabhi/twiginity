@@ -31,6 +31,7 @@ export const ContentForDrawers = ({
           onClick={handleSignInClick}
           sx={{
             backgroundColor: "#1DA1F2",
+            borderRadius: 0,
           }}
           size='large'>
           Sign in with Twitter

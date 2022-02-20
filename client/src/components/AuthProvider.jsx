@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router-dom";
+import { io } from "socket.io-client";
 
 export const AuthContext = createContext();
 
@@ -8,6 +9,11 @@ export function AuthProvider({ children }) {
     authenticated: false,
     user: null,
   });
+
+  console.log("AuthProvider => state update");
+  const { authenticated } = authenticatedUser;
+
+  const twitterId = authenticatedUser?.user?.twitterId;
 
   useEffect(() => {
     fetch("/auth/login/success", {
@@ -38,6 +44,10 @@ export function AuthProvider({ children }) {
       });
   }, []);
 
+  const socket = authenticated
+    ? io(`https://127.0.0.1:5001?twitterId=${twitterId}`, { autoConnect: false })
+    : null; // solve the proxying issue for socket.io
+
   const handleSignInClick = () => {
     window.open("/auth/twitter", "_self");
   };
@@ -53,7 +63,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ authenticatedUser, handleLogoutClick, handleSignInClick }}>
+      value={{ authenticatedUser, handleLogoutClick, handleSignInClick, socket }}>
       {children}
     </AuthContext.Provider>
   );

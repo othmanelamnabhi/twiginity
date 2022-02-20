@@ -1,4 +1,4 @@
-import { useState, useReducer } from "react";
+import { useState, useReducer, useEffect } from "react";
 import axios from "axios";
 
 import { Container, FormControl, Grid, Stack, Alert } from "@mui/material";
@@ -11,6 +11,8 @@ import {
   CustomCheckbox,
   CustomButton,
 } from "./StyledComponents";
+
+import { useAuth } from "./AuthProvider";
 
 import { deletionState, reducer } from "./DeleteEverything";
 
@@ -52,7 +54,9 @@ const tweetAgeValues = [
 export default function DeleteRecentTweets() {
   const [tweetAge, setTweetAge] = useState("Tweets older than one week");
   const [state, setState] = useReducer(reducer);
+  const { socket } = useAuth();
 
+  console.log("DeleteRecentTweets => state update");
   console.log("state right now => ", state);
 
   const handleSubmit = async (event) => {
@@ -71,8 +75,8 @@ export default function DeleteRecentTweets() {
         withCredentials: true,
       })
       .then((response) => {
-        return;
-      }) // setState saying how many tweets are about to be processed
+        setState(response.data);
+      })
       .catch((error) =>
         setState({ type: deletionState.error, message: error.response.data.message })
       );
@@ -81,6 +85,29 @@ export default function DeleteRecentTweets() {
   const handleChange = (event) => {
     setTweetAge(event.target.value);
   };
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.connect();
+
+    socket.on("connect", () => {
+      console.log("socket.io client connected! => ", socket.id);
+    });
+
+    // socket.on(deletionState.processing, (data) => {
+    //   console.log("socket ID => ", socket.id);
+    //   setState(data);
+    // });
+
+    socket.on(deletionState.deleting, (data) => {
+      console.log("socket ID => ", socket.id);
+      setState(data);
+    });
+
+    return () => {
+      socket.removeAllListeners();
+    };
+  }, [socket]);
 
   return (
     <Grid container spacing={2}>
