@@ -48,7 +48,7 @@ export function reducer(
 
 export default function DeleteEverything() {
   const [state, setState] = useReducer(reducer);
-  const { socket } = useAuth();
+  const { socket, handleNotAuthenticated } = useAuth();
 
   console.log("DeleteEverything => state update");
   console.log("state right now => ", state);
@@ -65,9 +65,12 @@ export default function DeleteEverything() {
       .then((response) => {
         setState(response.data);
       })
-      .catch((error) =>
-        setState({ type: deletionState.error, message: error.response.data.message })
-      );
+      .catch((error) => {
+        if (error.response.status === 401) {
+          return handleNotAuthenticated();
+        }
+        setState({ type: deletionState.error, message: error.response.data.message });
+      });
   };
 
   useEffect(() => {

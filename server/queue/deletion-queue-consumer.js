@@ -21,12 +21,6 @@ const deletionProcess = async ({
       error: error.message,
     });
   }
-
-  const logStream = fs.createWriteStream("./log.txt", { flags: "a" });
-  logStream.write(
-    `${new Date().toISOString()} ${Math.round(((index + 1) / numberOfTweets) * 100)} \n`
-  );
-  logStream.end();
 };
 
 module.exports = {

@@ -37,6 +37,29 @@ const streamToFile = (inputStream, filePath) => {
   });
 };
 
+function deleteFile(twitterId, { edited = true } = {}) {
+  fs.rm(
+    path.join(
+      __dirname,
+      "..",
+      "..",
+      "tmp",
+      twitterId + `${edited ? ".js" : "-tweet.js"}`
+    ),
+    (err) => {
+      if (err) {
+        console.error(err.message);
+        return;
+      }
+      console.log(
+        `${new Date().toISOString()} ${twitterId}${
+          edited ? ".js" : "-tweet.js"
+        } File deleted successfully`
+      );
+    }
+  );
+}
+
 async function deleteRecentTweets(req, res) {
   olderThan = req.body.time;
   const client = req.twitterClient;
@@ -110,7 +133,7 @@ async function deleteTweetJs(req, res, next) {
   const socketId = await redis.hget("user", `${twitterId}`);
   const tokens = req.user.tokens;
 
-  const uneditedTweetJs = path.join(
+  const uneditedTweetJsFile = path.join(
     __dirname,
     "..",
     "..",
@@ -119,7 +142,7 @@ async function deleteTweetJs(req, res, next) {
   );
 
   try {
-    if (!fs.existsSync(uneditedTweetJs))
+    if (!fs.existsSync(uneditedTweetJsFile))
       return res.status(400).send({
         type: "error",
         message: "tweet.js file not found, please upload it again",
@@ -147,25 +170,13 @@ async function deleteTweetJs(req, res, next) {
 
     await streamToFile(tweetJsReadStream, pathTweetJsWriteStream);
 
-    fs.rm(path.join(__dirname, "..", "..", "tmp", twitterId + "-tweet.js"), (err) => {
-      if (err) {
-        console.error(err.message);
-        return;
-      }
-      console.log(
-        `${new Date().toISOString()} ${twitterId} File deleted successfully \n`
-      );
-
-      const logStream = fs.createWriteStream("./log.txt", { flags: "a" });
-      logStream.write(
-        `${new Date().toISOString()} ${twitterId} File deleted successfully \n`
-      );
-      logStream.end();
-    });
+    deleteFile(twitterId, { edited: false });
 
     const tweets = require(`../../tmp/${twitterId}`);
 
     addArrayOfTweetsToJobQueue(tweets, tokens, twitterId, socketId, deleteTweetJob);
+    deleteFile(twitterId);
+
     return res.status(202).json({ type: "processing", tweetCount: tweets.length });
   } catch (error) {
     return res.status(500).json({ type: "error", message: error.message });

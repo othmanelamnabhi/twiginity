@@ -6,11 +6,11 @@ export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [authenticatedUser, setAuthenticatedUser] = useState({
-    authenticated: false,
+    authenticated: null,
     user: null,
   });
 
-  console.log("AuthProvider => state update");
+  console.log("AuthProvider => state update", authenticatedUser.authenticated);
   const { authenticated } = authenticatedUser;
 
   const twitterId = authenticatedUser?.user?.twitterId;
@@ -63,7 +63,13 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ authenticatedUser, handleLogoutClick, handleSignInClick, socket }}>
+      value={{
+        authenticatedUser,
+        handleLogoutClick,
+        handleSignInClick,
+        socket,
+        handleNotAuthenticated,
+      }}>
       {children}
     </AuthContext.Provider>
   );
@@ -78,13 +84,13 @@ export function RequireAuth({ children }) {
     authenticatedUser: { authenticated },
   } = useAuth();
 
-  if (!authenticated) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
-    return <Navigate to='/' />;
-  }
+  // if (!authenticated) {
+  //   // Redirect them to the /login page, but save the current location they were
+  //   // trying to go to when they were redirected. This allows us to send them
+  //   // along to that page after they login, which is a nicer user experience
+  //   // than dropping them off on the home page.
+  //   return <Navigate to='/' />;
+  // }
 
-  return children;
+  return authenticated === null ? null : authenticated ? children : <Navigate to='/' />;
 }

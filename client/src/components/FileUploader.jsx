@@ -6,11 +6,13 @@ import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 
 // Import FilePond styles
 import "filepond/dist/filepond.min.css";
+import { useAuth } from "./AuthProvider";
 
 registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType);
 
 export const FileUploader = () => {
   const [files, setFiles] = useState([]);
+  const { handleNotAuthenticated } = useAuth();
 
   return (
     <FilePond
@@ -32,6 +34,11 @@ export const FileUploader = () => {
         withCredentials: true,
       }}
       labelIdle='Drag & Drop your tweet.js file here or <span class="filepond--label-action">Browse</span> to find it'
+      onerror={(e) => {
+        if (e.code === 401) {
+          handleNotAuthenticated();
+        }
+      }}
     />
   );
 };

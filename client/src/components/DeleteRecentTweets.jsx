@@ -54,7 +54,7 @@ const tweetAgeValues = [
 export default function DeleteRecentTweets() {
   const [tweetAge, setTweetAge] = useState("Tweets older than one week");
   const [state, setState] = useReducer(reducer);
-  const { socket } = useAuth();
+  const { socket, handleNotAuthenticated } = useAuth();
 
   console.log("DeleteRecentTweets => state update");
   console.log("state right now => ", state);
@@ -77,9 +77,12 @@ export default function DeleteRecentTweets() {
       .then((response) => {
         setState(response.data);
       })
-      .catch((error) =>
-        setState({ type: deletionState.error, message: error.response.data.message })
-      );
+      .catch((error) => {
+        if (error.response.status === 401) {
+          return handleNotAuthenticated();
+        }
+        setState({ type: deletionState.error, message: error.response.data.message });
+      });
   };
 
   const handleChange = (event) => {
