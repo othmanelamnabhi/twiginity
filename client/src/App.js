@@ -10,6 +10,7 @@ import UnauthenticatedHome from "./components/UnauthenticatedHome";
 import DeleteRecentTweets from "./components/DeleteRecentTweets";
 import DeleteEverything from "./components/DeleteEverything";
 import { ContentForDrawers } from "./components/ContentForDrawers";
+import Error404 from "./components/Error404";
 
 import { useAuth, RequireAuth } from "./components/AuthProvider";
 
@@ -132,6 +133,7 @@ function App() {
               </RequireAuth>
             }
           />
+          <Route path='*' element={<Error404 />} />
         </Routes>
       </Box>
     </div>

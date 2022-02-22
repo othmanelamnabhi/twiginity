@@ -58,6 +58,7 @@ export function AuthProvider({ children }) {
   };
 
   const handleNotAuthenticated = () => {
+    socket.disconnect();
     setAuthenticatedUser({ authenticated: false });
   };
 

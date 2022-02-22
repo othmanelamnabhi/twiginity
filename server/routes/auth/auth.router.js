@@ -6,7 +6,7 @@ authRouter.get("/twitter", passport.authenticate("twitter"));
 
 authRouter.get("/logout", (req, res) => {
   req.logout();
-  // res.redirect("https://127.0.0.1:3000");
+  res.redirect("https://127.0.0.1:3000");
 });
 
 authRouter.get("/login/success", (req, res) => {

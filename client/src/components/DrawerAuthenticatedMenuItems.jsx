@@ -1,4 +1,4 @@
-import { Link as RouterLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import {
   ListItemIcon,
@@ -33,8 +33,14 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetSta
         <List component='div' disablePadding>
           <ListItemButton
             sx={{ pl: 4 }}
+            style={({ isActive }) => {
+              return {
+                color: isActive ? "#B23842" : "",
+                backgroundColor: isActive ? "white" : "",
+              };
+            }}
             to='/delete-recent'
-            component={RouterLink}
+            component={NavLink}
             onClick={drawerSetState}>
             <ListItemIcon>
               <AutoDeleteIcon sx={{ color: "white" }} />
@@ -43,8 +49,14 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetSta
           </ListItemButton>
           <ListItemButton
             sx={{ pl: 4 }}
+            style={({ isActive }) => {
+              return {
+                color: isActive ? "#B23842" : "",
+                backgroundColor: isActive ? "white" : "",
+              };
+            }}
             to='/delete-everything'
-            component={RouterLink}
+            component={NavLink}
             onClick={drawerSetState}>
             <ListItemIcon>
               <DeleteForeverIcon sx={{ color: "white" }} />
