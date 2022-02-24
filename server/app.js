@@ -23,7 +23,7 @@ app.all("*", httpToHttpsRedirect);
 app.use(
   cookieSession({
     maxAge: 60 * 60 * 24 * 1000,
-    keys: JSON.parse(process.env.cookieKeys), // store those in .env file
+    keys: JSON.parse(process.env.COOKIE_KEYS), // store those in .env file
     name: "session",
   })
 );

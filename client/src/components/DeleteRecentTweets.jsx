@@ -1,7 +1,8 @@
 import { useState, useReducer, useEffect } from "react";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
-import { Container, FormControl, Grid, Stack, Alert } from "@mui/material";
+import { Container, FormControl, Grid, Stack, Alert, AlertTitle } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import {
   CustomH2,
@@ -54,7 +55,10 @@ const tweetAgeValues = [
 export default function DeleteRecentTweets() {
   const [tweetAge, setTweetAge] = useState("Tweets older than one week");
   const [state, setState] = useReducer(reducer);
-  const { socket, handleNotAuthenticated } = useAuth();
+  const { socket, handleLogoutClick } = useAuth();
+  let [searchParams] = useSearchParams();
+
+  const isExpired = searchParams.get("session") === "expired";
 
   console.log("DeleteRecentTweets => state update");
   console.log("state right now => ", state);
@@ -78,8 +82,9 @@ export default function DeleteRecentTweets() {
         setState(response.data);
       })
       .catch((error) => {
+        console.log(error);
         if (error.response.status === 401) {
-          return handleNotAuthenticated();
+          return handleLogoutClick(undefined, true);
         }
         setState({ type: deletionState.error, message: error.response.data.message });
       });
@@ -118,6 +123,12 @@ export default function DeleteRecentTweets() {
       <Grid item xs={12} md={10} xl={7}>
         <Container>
           <Stack spacing={5}>
+            {isExpired ? (
+              <Alert severity='error'>
+                <AlertTitle>Session Expired</AlertTitle>
+                Your tokens are no longer valid. Please <strong>login</strong> again!
+              </Alert>
+            ) : null}
             <CustomH2
               variant='h2'
               sx={{
@@ -140,8 +151,9 @@ export default function DeleteRecentTweets() {
               </li>
             </ul>
             <Alert severity='warning' variant='filled'>
-              With Twitter API v2 now released, the new rate limits will render the
-              "delete" feature of this app almost useless. So use it while you can !
+              With Twitter API v2 now released, the new (and very low) rate limits will
+              render the "delete" feature of this app almost useless. So use it while you
+              can !
             </Alert>
             <form onSubmit={handleSubmit}>
               <Stack spacing={5}>

@@ -9,6 +9,7 @@ const userSchema = new Schema({
     accessToken: { type: String },
     accessTokenSecret: { type: String },
   },
+  iv: { type: Buffer },
 });
 
 module.exports = model("User", userSchema);

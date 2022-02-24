@@ -1,8 +1,10 @@
-import { Button, Container, Alert, Grid, Stack } from "@mui/material";
+import { Button, Container, Alert, Grid, Stack, AlertTitle } from "@mui/material";
 import { Twitter } from "@mui/icons-material";
 
 import { useAuth } from "./AuthProvider";
 import { CustomH2 } from "./StyledComponents";
+
+import { useSearchParams } from "react-router-dom";
 
 export default function UnauthenticatedHome() {
   const {
@@ -10,12 +12,22 @@ export default function UnauthenticatedHome() {
     authenticatedUser: { authenticated },
   } = useAuth();
 
+  let [searchParams] = useSearchParams();
+
+  const isExpired = searchParams.get("session") === "expired";
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={1} xl={1}></Grid>
       <Grid item xs={12} md={10} xl={7}>
         <Container>
           <Stack spacing={5}>
+            {isExpired ? (
+              <Alert severity='error'>
+                <AlertTitle>Session Expired</AlertTitle>
+                Your tokens are no longer valid. Please <strong>login</strong> again!
+              </Alert>
+            ) : null}
             <CustomH2
               variant='h2'
               sx={{
@@ -42,8 +54,9 @@ export default function UnauthenticatedHome() {
               </li>
             </ul>
             <Alert severity='warning' variant='filled'>
-              With Twitter API v2 now released, the new rate limits will render the
-              "delete" feature of this app almost useless. So use it while you can !
+              With Twitter API v2 now released, the new (and very low) rate limits will
+              render the "delete" feature of this app almost useless. So use it while you
+              can !
             </Alert>
 
             {!authenticated ? (

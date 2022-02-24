@@ -109,26 +109,37 @@ async function deleteRecentTweets(req, res) {
       .status(202)
       .json({ type: "processing", tweetCount: tweetsToBeDeleted.length });
   } catch (error) {
-    return res.status(500).json({ type: "error", message: error.message });
+    return res.status(error.code ?? 500).json({ type: "error", message: error.message });
   }
 }
 
 async function uploadTweetJs(req, res) {
   let file;
   let uploadPath;
+  const client = req.twitterClient;
 
-  file = req.files.tweetjs;
-  const newFileName = req.user.twitterId + "-tweet.js";
-  uploadPath = path.join(__dirname, "..", "..", "tmp", newFileName);
+  try {
+    // test if tokens are still valid
+    await client.v2.me({ expansions: ["pinned_tweet_id"] });
 
-  file.mv(uploadPath, function (err) {
-    if (err) return res.status(500).json({ type: "error", message: err.message });
+    file = req.files.tweetjs;
+    const newFileName = req.user.twitterId + "-tweet.js";
+    uploadPath = path.join(__dirname, "..", "..", "tmp", newFileName);
 
-    res.send(`${newFileName}`);
-  });
+    file.mv(uploadPath, function (err) {
+      if (err) return res.status(500).json({ type: "error", message: err.message });
+
+      res.send(`${newFileName}`);
+    });
+  } catch (error) {
+    return res.status(error.code ?? 500).json({ type: "error", message: error.message });
+  }
 }
 
 async function deleteTweetJs(req, res, next) {
+  const client = req.twitterClient;
+  // test if tokens are still valid
+
   const twitterId = req.user.twitterId;
   const socketId = await redis.hget("user", `${twitterId}`);
   const tokens = req.user.tokens;
@@ -142,6 +153,7 @@ async function deleteTweetJs(req, res, next) {
   );
 
   try {
+    await client.v2.me({ expansions: ["pinned_tweet_id"] });
     if (!fs.existsSync(uneditedTweetJsFile))
       return res.status(400).send({
         type: "error",
@@ -179,7 +191,7 @@ async function deleteTweetJs(req, res, next) {
 
     return res.status(202).json({ type: "processing", tweetCount: tweets.length });
   } catch (error) {
-    return res.status(500).json({ type: "error", message: error.message });
+    return res.status(error.code ?? 500).json({ type: "error", message: error.message });
   }
 }
 

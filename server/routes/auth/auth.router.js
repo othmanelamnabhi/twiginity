@@ -5,8 +5,13 @@ const passport = require("passport");
 authRouter.get("/twitter", passport.authenticate("twitter"));
 
 authRouter.get("/logout", (req, res) => {
+  const session = req.query.session;
+  const isExpired = session === "expired";
+  console.log(isExpired);
   req.logout();
-  res.redirect("https://127.0.0.1:3000");
+  isExpired
+    ? res.redirect(`https://127.0.0.1:3000?session=expired`)
+    : res.redirect(`https://127.0.0.1:3000`);
 });
 
 authRouter.get("/login/success", (req, res) => {

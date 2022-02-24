@@ -52,8 +52,11 @@ export function AuthProvider({ children }) {
     window.open("/auth/twitter", "_self");
   };
 
-  const handleLogoutClick = () => {
-    window.open("/auth/logout", "_self");
+  const handleLogoutClick = (e, expired = false) => {
+    console.log("expired ", expired);
+    expired
+      ? window.open(`/auth/logout?session=expired`, "_self")
+      : window.open(`/auth/logout`, "_self");
     handleNotAuthenticated();
   };
 
