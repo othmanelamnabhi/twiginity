@@ -1,6 +1,5 @@
 require("dotenv").config();
 const fs = require("fs");
-// const http = require("http");
 const https = require("https");
 const connectToDatabase = require("./helpers/dbConnection");
 const connectToRedis = require("./helpers/redisConnection");
@@ -9,7 +8,6 @@ const { Server } = require("socket.io");
 const { HTTPS_OPTIONS, HTTPS_PORT } = require("./helpers/serverConfig");
 const app = require("./app");
 
-// const server = http.createServer(app);
 const httpsServer = https.createServer(HTTPS_OPTIONS, app);
 
 global.io = new Server(httpsServer, {
@@ -32,11 +30,6 @@ io.on("connection", (socket) => {
   );
 
   socket.on("disconnect", () => console.log("disconnected"));
-});
-
-process.on("SIGINT", () => {
-  console.log("exiting…");
-  process.exit();
 });
 
 process.on("uncaughtException", function (err) {

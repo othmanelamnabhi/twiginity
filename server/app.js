@@ -7,7 +7,6 @@ const cors = require("cors");
 
 require("./auth/twitter-api-authentication");
 
-const httpToHttpsRedirect = require("./helpers/httptohttpsredirect");
 const app = express();
 const authRouter = require("./routes/auth/auth.router");
 const tweetsRouter = require("./routes/tweets/tweets.router");
@@ -16,9 +15,6 @@ app.use(morgan("combined"));
 
 // Secure the app with Helmet
 app.use(helmet());
-
-// Middleware to handle HTTP to HTTPS redirects on all requests
-app.all("*", httpToHttpsRedirect);
 
 app.use(
   cookieSession({

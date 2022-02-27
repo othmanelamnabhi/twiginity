@@ -1,19 +1,18 @@
 import axios from "axios";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { Container, Alert, Grid, Stack, AlertTitle } from "@mui/material";
-import { Delete } from "@mui/icons-material";
-import {
-  CustomH2,
-  CustomCheckbox,
-  CustomFormControlLabel,
-  CustomButton,
-} from "./StyledComponents";
+
+import { CustomH2, CustomCheckbox, CustomFormControlLabel } from "./StyledComponents";
+import LoadingButton from "./LoadingButton";
 
 import { FileUploader } from "./FileUploader";
+import SimpleBackdrop from "./Backdrop";
+import ProgressBar from "./ProgressBar";
 
 import { useAuth } from "./AuthProvider";
+import ErrorOrNoResults from "./ErrorOrNoResults";
 
 export const deletionState = {
   processing: "processing",
@@ -21,6 +20,7 @@ export const deletionState = {
   queuing: "queuing",
   error: "error",
   noResults: "no results",
+  ready: "ready",
 };
 
 export function reducer(
@@ -28,10 +28,22 @@ export function reducer(
   { type, tweetCount, progress, tweetNumber, message, deleteError }
 ) {
   switch (type) {
+    case deletionState.ready:
+      return { ready: true };
     case deletionState.processing:
       return { processing: true, tweetCount };
     case deletionState.deleting:
-      return { deleting: true, progress, tweetNumber, deleteError };
+      console.log("deletionState.deleting old => ", state.deleteError);
+      console.log("deletionState.deleting new => ", deleteError);
+      let arrayOfErrors = state.deleteError !== undefined ? [...state.deleteError] : [];
+
+      if (deleteError !== undefined) arrayOfErrors.push(deleteError);
+      return {
+        deleting: true,
+        progress,
+        tweetNumber,
+        deleteError: arrayOfErrors,
+      };
     case deletionState.queuing:
       return {}; // define data for this state
     case deletionState.error:
@@ -48,17 +60,19 @@ export function reducer(
 }
 
 export default function DeleteEverything() {
-  const [state, setState] = useReducer(reducer);
+  const [state, setState] = useReducer(reducer, { ready: true });
+  const [loading, setLoading] = useState(false);
   const { socket, handleLogoutClick } = useAuth();
   let [searchParams] = useSearchParams();
 
   const isExpired = searchParams.get("session") === "expired";
 
-  console.log("DeleteEverything => state update");
-  console.log("state right now => ", state);
+  console.log("DeleteEverything => ", state);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+
     const filename = event.target.elements.tweetjs.value;
 
     axios
@@ -86,11 +100,6 @@ export default function DeleteEverything() {
       console.log("socket.io client connected! => ", socket.id);
     });
 
-    // socket.on(deletionState.processing, (data) => {
-    //   console.log("socket ID => ", socket.id);
-    //   setState(data);
-    // });
-
     socket.on(deletionState.deleting, (data) => {
       console.log("socket ID => ", socket.id);
       setState(data);
@@ -98,6 +107,7 @@ export default function DeleteEverything() {
 
     return () => {
       socket.removeAllListeners();
+      socket.disconnect();
     };
   }, [socket]);
 
@@ -127,32 +137,39 @@ export default function DeleteEverything() {
               }}>
               Delete everything
             </CustomH2>
-            <ul className='li-spacing white'>
+            <ul className='li-spacing white ul-margin'>
               <li>Submit your Twitter data file for processing to delete more tweets.</li>
               <li>
                 Please read the upload instructions for details on where to get this file
                 from.
               </li>
             </ul>
-            <Alert severity='warning' variant='filled'>
-              With Twitter API v2 now released, the new (and very low) rate limits will
-              render the "delete" feature of this app almost useless. So use it while you
-              can !
-            </Alert>
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={5}>
-                <FileUploader />
+            {state.ready ? (
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={5}>
+                  <FileUploader />
 
-                <CustomFormControlLabel
-                  control={<CustomCheckbox id='acceptTerms' required />}
-                  label='I understand deleted tweets cannot be recovered.'
-                />
-                <CustomButton variant='contained' startIcon={<Delete />} type='submit'>
-                  Delete
-                </CustomButton>
-              </Stack>
-            </form>
+                  <CustomFormControlLabel
+                    control={<CustomCheckbox id='acceptTerms' required />}
+                    label='I understand deleted tweets cannot be recovered.'
+                  />
+                  <LoadingButton loadingState={loading} />
+                </Stack>
+              </form>
+            ) : null}
+            <SimpleBackdrop state={state} />
           </Stack>
+          {state?.deleting ? (
+            <ProgressBar value={state.progress} messages={state?.deleteError} load />
+          ) : null}
+          {state?.error ? (
+            <ErrorOrNoResults
+              error={state.error ? true : false}
+              message={state.message}
+              setState={setState}
+              setLoading={setLoading}
+            />
+          ) : null}
         </Container>
       </Grid>
       <Grid item xs={12} md={1} xl={4}></Grid>

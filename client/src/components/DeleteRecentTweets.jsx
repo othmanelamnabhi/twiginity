@@ -3,19 +3,21 @@ import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
 import { Container, FormControl, Grid, Stack, Alert, AlertTitle } from "@mui/material";
-import { Delete } from "@mui/icons-material";
 import {
   CustomH2,
   CustomTextField,
   WhiteFormLabel,
   CustomFormControlLabel,
   CustomCheckbox,
-  CustomButton,
 } from "./StyledComponents";
+import LoadingButton from "./LoadingButton";
+import SimpleBackdrop from "./Backdrop";
 
 import { useAuth } from "./AuthProvider";
 
 import { deletionState, reducer } from "./DeleteEverything";
+import ProgressBar from "./ProgressBar";
+import ErrorOrNoResults from "./ErrorOrNoResults";
 
 const tweetAgeValues = [
   {
@@ -54,17 +56,18 @@ const tweetAgeValues = [
 
 export default function DeleteRecentTweets() {
   const [tweetAge, setTweetAge] = useState("Tweets older than one week");
-  const [state, setState] = useReducer(reducer);
+  const [state, setState] = useReducer(reducer, { ready: true });
+  const [loading, setLoading] = useState(false);
   const { socket, handleLogoutClick } = useAuth();
   let [searchParams] = useSearchParams();
 
   const isExpired = searchParams.get("session") === "expired";
 
-  console.log("DeleteRecentTweets => state update");
-  console.log("state right now => ", state);
+  console.log("DeleteRecentTweets => ", state);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     const timeNow = new Date().getTime();
     const timeToSubstract = Number(event.target.elements.tweetAge.value);
@@ -102,11 +105,6 @@ export default function DeleteRecentTweets() {
       console.log("socket.io client connected! => ", socket.id);
     });
 
-    // socket.on(deletionState.processing, (data) => {
-    //   console.log("socket ID => ", socket.id);
-    //   setState(data);
-    // });
-
     socket.on(deletionState.deleting, (data) => {
       console.log("socket ID => ", socket.id);
       setState(data);
@@ -114,6 +112,7 @@ export default function DeleteRecentTweets() {
 
     return () => {
       socket.removeAllListeners();
+      socket.disconnect();
     };
   }, [socket]);
 
@@ -143,58 +142,65 @@ export default function DeleteRecentTweets() {
               }}>
               Delete recent tweets
             </CustomH2>
-            <ul className='white li-spacing'>
+            <ul className='white li-spacing ul-margin'>
               <li>Deletes up to 3,200 of your most recent tweets (limitations).</li>
-              <li>
-                Premium users can delete from their whole tweet history after uploading
-                their Twitter data file.
-              </li>
+              <li>You can bypass that limitation by uploading your Twitter data file.</li>
             </ul>
-            <Alert severity='warning' variant='filled'>
-              With Twitter API v2 now released, the new (and very low) rate limits will
-              render the "delete" feature of this app almost useless. So use it while you
-              can !
-            </Alert>
-            <form onSubmit={handleSubmit}>
-              <Stack spacing={5}>
-                <FormControl fullWidth>
-                  <WhiteFormLabel sx={{ color: "white" }}>
-                    Age of tweets to delete
-                  </WhiteFormLabel>
-                  <CustomTextField
-                    id='tweetAge'
-                    select
-                    value={tweetAge}
-                    onChange={handleChange}
-                    SelectProps={{
-                      native: true,
-                    }}>
-                    {tweetAgeValues.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </CustomTextField>
-                </FormControl>
+            {state?.ready ? (
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={5}>
+                  <FormControl fullWidth>
+                    <WhiteFormLabel sx={{ color: "white" }}>
+                      Age of tweets to delete
+                    </WhiteFormLabel>
+                    <CustomTextField
+                      id='tweetAge'
+                      select
+                      value={tweetAge}
+                      onChange={handleChange}
+                      SelectProps={{
+                        native: true,
+                      }}>
+                      {tweetAgeValues.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </CustomTextField>
+                  </FormControl>
 
-                <FormControl fullWidth>
-                  <WhiteFormLabel>Only tweets containing this word/phrase</WhiteFormLabel>
-                  <CustomTextField
-                    helperText='Leave blank to delete all tweets matching the age above.'
-                    id='tweetKeyword'
+                  <FormControl fullWidth>
+                    <WhiteFormLabel>
+                      Only tweets containing this word/phrase
+                    </WhiteFormLabel>
+                    <CustomTextField
+                      helperText='Leave blank to delete all tweets matching the age above.'
+                      id='tweetKeyword'
+                    />
+                  </FormControl>
+
+                  <CustomFormControlLabel
+                    control={<CustomCheckbox id='acceptTerms' required />}
+                    label='I understand deleted tweets cannot be recovered.'
                   />
-                </FormControl>
+                  <LoadingButton loadingState={loading} />
+                </Stack>
+              </form>
+            ) : null}
 
-                <CustomFormControlLabel
-                  control={<CustomCheckbox id='acceptTerms' required />}
-                  label='I understand deleted tweets cannot be recovered.'
-                />
-                <CustomButton variant='contained' startIcon={<Delete />} type='submit'>
-                  Delete
-                </CustomButton>
-              </Stack>
-            </form>
+            <SimpleBackdrop state={state} />
           </Stack>
+          {state?.deleting ? (
+            <ProgressBar value={state.progress} messages={state?.deleteError} />
+          ) : null}
+          {state?.error || state?.noResults ? (
+            <ErrorOrNoResults
+              error={state.error ? true : false}
+              message={state.message}
+              setState={setState}
+              setLoading={setLoading}
+            />
+          ) : null}
         </Container>
       </Grid>
       <Grid item xs={12} md={1} xl={4}></Grid>

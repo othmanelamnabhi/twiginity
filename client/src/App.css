@@ -5,3 +5,15 @@
 .li-spacing li:not(:last-child) {
   margin-bottom: 10px;
 }
+
+.ul-margin {
+  padding-inline-start: 15px;
+}
+
+.red {
+  color: #b23842;
+}
+
+.ant-progress-text {
+  color: white;
+}

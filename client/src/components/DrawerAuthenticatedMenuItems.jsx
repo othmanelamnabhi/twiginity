@@ -8,6 +8,8 @@ import {
   Collapse,
 } from "@mui/material";
 
+import { useLocation } from "react-router-dom";
+
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,6 +21,7 @@ import { useAuth } from "./AuthProvider";
 
 export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetState }) => {
   const { handleLogoutClick } = useAuth();
+  const { pathname } = useLocation();
 
   return (
     <List sx={{ color: "white" }}>
@@ -32,7 +35,11 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetSta
       <Collapse in={nestedListState} timeout='auto' unmountOnExit>
         <List component='div' disablePadding>
           <ListItemButton
-            sx={{ pl: 4 }}
+            sx={{
+              pl: 4,
+              "&:hover": { color: "inherit" },
+              "&:focus": { color: "inherit", textDecoration: "none" },
+            }}
             style={({ isActive }) => {
               return {
                 color: isActive ? "#B23842" : "",
@@ -43,12 +50,18 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetSta
             component={NavLink}
             onClick={drawerSetState}>
             <ListItemIcon>
-              <AutoDeleteIcon sx={{ color: "white" }} />
+              <AutoDeleteIcon
+                className={pathname === "/delete-recent" ? "red" : "white"}
+              />
             </ListItemIcon>
             <ListItemText primary='Most Recent' />
           </ListItemButton>
           <ListItemButton
-            sx={{ pl: 4 }}
+            sx={{
+              pl: 4,
+              "&:hover": { color: "inherit" },
+              "&:focus": { color: "inherit", textDecoration: "none" },
+            }}
             style={({ isActive }) => {
               return {
                 color: isActive ? "#B23842" : "",
@@ -59,7 +72,9 @@ export const DrawerAuthenticated = ({ handleClick, nestedListState, drawerSetSta
             component={NavLink}
             onClick={drawerSetState}>
             <ListItemIcon>
-              <DeleteForeverIcon sx={{ color: "white" }} />
+              <DeleteForeverIcon
+                className={pathname === "/delete-everything" ? "red" : "white"}
+              />
             </ListItemIcon>
             <ListItemText primary='Everything' />
           </ListItemButton>

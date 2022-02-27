@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
     user: null,
   });
 
-  console.log("AuthProvider => state update", authenticatedUser.authenticated);
   const { authenticated } = authenticatedUser;
 
   const twitterId = authenticatedUser?.user?.twitterId;
@@ -45,7 +44,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const socket = authenticated
-    ? io(`https://127.0.0.1:5001?twitterId=${twitterId}`, { autoConnect: false })
+    ? io(`https://127.0.0.1:50000?twitterId=${twitterId}`, { autoConnect: false })
     : null; // solve the proxying issue for socket.io
 
   const handleSignInClick = () => {

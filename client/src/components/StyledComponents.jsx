@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   FormControlLabel,
   FormLabel,
@@ -7,6 +6,7 @@ import {
   Typography,
   Toolbar,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { red } from "@mui/material/colors";
 import { styled } from "@mui/system";
 
@@ -38,7 +38,7 @@ const CustomFormControlLabel = styled(FormControlLabel)({
   color: "white",
 });
 
-const CustomButton = styled(Button)({
+const CustomButton = styled(LoadingButton)({
   backgroundColor: "#B23842",
   "&:hover": {
     backgroundColor: "#D6535D",
@@ -46,6 +46,10 @@ const CustomButton = styled(Button)({
   "&:active": {
     backgroundColor: "#FFF",
     color: "#202020",
+  },
+  "&.Mui-disabled": {
+    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    color: "rgba(255, 255, 255, 0.3)",
   },
 });
 

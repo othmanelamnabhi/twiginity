@@ -5,12 +5,14 @@ import { useAuth } from "./AuthProvider";
 import { CustomH2 } from "./StyledComponents";
 
 import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 
 export default function UnauthenticatedHome() {
   const {
     handleSignInClick,
     authenticatedUser: { authenticated },
   } = useAuth();
+  const [showAlert, setShowAlert] = useState(true);
 
   let [searchParams] = useSearchParams();
 
@@ -53,11 +55,18 @@ export default function UnauthenticatedHome() {
                 in your Twitter data file.
               </li>
             </ul>
-            <Alert severity='warning' variant='filled'>
-              With Twitter API v2 now released, the new (and very low) rate limits will
-              render the "delete" feature of this app almost useless. So use it while you
-              can !
-            </Alert>
+            {showAlert && (
+              <Alert
+                severity='warning'
+                variant='filled'
+                onClose={() => {
+                  setShowAlert((oldState) => !oldState);
+                }}>
+                With Twitter API v2 now released, the new (and very low) rate limits will
+                render the "delete" feature of this app almost useless. So use it while
+                you can !
+              </Alert>
+            )}
 
             {!authenticated ? (
               <Button

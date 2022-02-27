@@ -4,7 +4,7 @@ module.exports = function (app) {
   app.use(
     "/auth",
     createProxyMiddleware({
-      target: "https://127.0.0.1:5001/",
+      target: "https://127.0.0.1:50000/",
       changeOrigin: true,
       secure: false,
     })
@@ -12,7 +12,7 @@ module.exports = function (app) {
   app.use(
     "/tweets",
     createProxyMiddleware({
-      target: "https://127.0.0.1:5001/",
+      target: "https://127.0.0.1:50000/",
       changeOrigin: true,
       secure: false,
     })

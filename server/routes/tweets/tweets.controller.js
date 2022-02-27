@@ -138,7 +138,6 @@ async function uploadTweetJs(req, res) {
 
 async function deleteTweetJs(req, res, next) {
   const client = req.twitterClient;
-  // test if tokens are still valid
 
   const twitterId = req.user.twitterId;
   const socketId = await redis.hget("user", `${twitterId}`);
@@ -153,7 +152,9 @@ async function deleteTweetJs(req, res, next) {
   );
 
   try {
+    // test if tokens are still valid
     await client.v2.me({ expansions: ["pinned_tweet_id"] });
+
     if (!fs.existsSync(uneditedTweetJsFile))
       return res.status(400).send({
         type: "error",
