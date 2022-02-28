@@ -191,7 +191,11 @@ export default function DeleteRecentTweets() {
             <SimpleBackdrop state={state} />
           </Stack>
           {state?.deleting ? (
-            <ProgressBar value={state.progress} messages={state?.deleteError} />
+            <ProgressBar
+              messages={state?.deleteError}
+              tweetsProcessed={state.increment}
+              numberOfTweets={state.numberOfTweets}
+            />
           ) : null}
           {state?.error || state?.noResults ? (
             <ErrorOrNoResults

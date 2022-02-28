@@ -8,6 +8,7 @@ function addArrayOfTweetsToJobQueue(
   arrayOfTweets,
   tokens,
   twitterId,
+  username,
   socketId,
   addToQueueFunction
 ) {
@@ -18,6 +19,7 @@ function addArrayOfTweetsToJobQueue(
       tweetId: id,
       tokens,
       twitterId,
+      username,
       numberOfTweets: arrayOfTweets.length,
       index,
       socketId,
@@ -64,6 +66,7 @@ async function deleteRecentTweets(req, res) {
   olderThan = req.body.time;
   const client = req.twitterClient;
   const twitterId = req.user.twitterId;
+  const username = req.user.username;
   const keyword = req.body?.keyword?.toLowerCase();
   const tokens = req.user.tokens;
   const socketId = await redis.hget("user", `${twitterId}`);
@@ -101,6 +104,7 @@ async function deleteRecentTweets(req, res) {
       tweetsToBeDeleted,
       tokens,
       twitterId,
+      username,
       socketId,
       deleteTweetJob
     );
@@ -138,7 +142,7 @@ async function uploadTweetJs(req, res) {
 
 async function deleteTweetJs(req, res, next) {
   const client = req.twitterClient;
-
+  const username = req.user.username;
   const twitterId = req.user.twitterId;
   const socketId = await redis.hget("user", `${twitterId}`);
   const tokens = req.user.tokens;
@@ -187,7 +191,14 @@ async function deleteTweetJs(req, res, next) {
 
     const tweets = require(`../../tmp/${twitterId}`);
 
-    addArrayOfTweetsToJobQueue(tweets, tokens, twitterId, socketId, deleteTweetJob);
+    addArrayOfTweetsToJobQueue(
+      tweets,
+      tokens,
+      twitterId,
+      username,
+      socketId,
+      deleteTweetJob
+    );
     deleteFile(twitterId);
 
     return res.status(202).json({ type: "processing", tweetCount: tweets.length });

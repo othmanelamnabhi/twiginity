@@ -1,33 +1,48 @@
 const fs = require("fs");
-
-// import twitterClient for deletion
-// simulate error
-// check if already deleted
-// if tweet exists, render link to tweet
+const { TwitterApi } = require("twitter-api-v2");
 
 const awaitTimeout = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 const deletionProcess = async (
-  { data: { tweetId, tokens, twitterId, numberOfTweets, index, socketId } },
+  { data: { tweetId, tokens, twitterId, numberOfTweets, index, socketId, username } },
   done
 ) => {
-  await awaitTimeout(1000);
+  const twitterClient = new TwitterApi({
+    appKey: process.env.API_KEY,
+    appSecret: process.env.API_SECRET_KEY,
+    accessToken: tokens.accessToken,
+    accessSecret: tokens.accessTokenSecret,
+  });
   try {
     console.log(index + 1);
-    throw new Error("hola");
+    await twitterClient.v1.deleteTweet("1498397214393122823");
     io.to(socketId).emit("deleting", {
       type: "deleting",
-      progress: Math.round(((index + 1) / numberOfTweets) * 100),
-      tweetNumber: index + 1,
+      numberOfTweets,
+      increment: 1,
     });
 
     done(null, index + 1);
   } catch (error) {
+    console.log(error.code);
+    if (error?.code === 404) {
+      io.to(socketId).emit("deleting", {
+        type: "deleting",
+        numberOfTweets,
+        increment: 1,
+        tweetId,
+        deleteError: "notFound",
+        error: error.message,
+      });
+      return done(error);
+    }
     io.to(socketId).emit("deleting", {
       type: "deleting",
-      progress: Math.round(((index + 1) / numberOfTweets) * 100),
-      tweetNumber: index + 1,
-      deleteError: `Tweet ID -> ${tweetId} could not be deleted.`,
+      numberOfTweets,
+      increment: 1,
+      tweetId,
+      username,
+      deleteError: "anotherError",
       error: error.message,
     });
 

@@ -25,7 +25,7 @@ export const deletionState = {
 
 export function reducer(
   state,
-  { type, tweetCount, progress, tweetNumber, message, deleteError }
+  { type, tweetCount, message, deleteError, tweetId, username, increment, numberOfTweets }
 ) {
   switch (type) {
     case deletionState.ready:
@@ -37,11 +37,13 @@ export function reducer(
       console.log("deletionState.deleting new => ", deleteError);
       let arrayOfErrors = state.deleteError !== undefined ? [...state.deleteError] : [];
 
-      if (deleteError !== undefined) arrayOfErrors.push(deleteError);
+      if (deleteError !== undefined)
+        arrayOfErrors.push({ tweetId, deleteError, username });
+
       return {
         deleting: true,
-        progress,
-        tweetNumber,
+        increment: (state.increment ?? 0) + increment,
+        numberOfTweets,
         deleteError: arrayOfErrors,
       };
     case deletionState.queuing:
@@ -51,7 +53,6 @@ export function reducer(
     case deletionState.noResults:
       return {
         noResults: true,
-        message: "No tweets answering to these criteria were found",
       }; // define data for this state
 
     default:
@@ -160,7 +161,12 @@ export default function DeleteEverything() {
             <SimpleBackdrop state={state} />
           </Stack>
           {state?.deleting ? (
-            <ProgressBar value={state.progress} messages={state?.deleteError} load />
+            <ProgressBar
+              tweetsProcessed={state.increment}
+              numberOfTweets={state.numberOfTweets}
+              messages={state?.deleteError}
+              load
+            />
           ) : null}
           {state?.error ? (
             <ErrorOrNoResults

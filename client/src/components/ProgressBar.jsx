@@ -7,16 +7,18 @@ import { CustomH2 } from "./StyledComponents";
 import { Box } from "@mui/material";
 import { useLayoutEffect, useRef } from "react";
 
-export default function ProgressBar({ value, messages }) {
+export default function ProgressBar({ tweetsProcessed, numberOfTweets, messages }) {
   const scrollToBottomRef = useRef();
-  console.log(scrollToBottomRef.current);
+  console.log(tweetsProcessed, numberOfTweets);
 
   useLayoutEffect(() => {
     scrollToBottomRef.current?.scrollIntoView();
   });
   return (
     <>
-      <LinearProgressWithLabel value={value} />
+      <LinearProgressWithLabel
+        value={Math.round((tweetsProcessed / numberOfTweets) * 100)}
+      />
 
       {messages.length > 0 ? (
         <Box
@@ -41,14 +43,30 @@ export default function ProgressBar({ value, messages }) {
             },
           }}>
           {" "}
-          {messages.map((message, index, arr) => {
+          {messages.map(({ tweetId, deleteError, username }, index, arr) => {
             return (
               <div
                 style={{ display: "flex", alignItems: "center" }}
                 key={index}
                 ref={arr[index + 1] ? null : scrollToBottomRef}>
                 <CancelIcon sx={{ marginRight: ".5rem", color: "#B23842" }} />
-                <CustomH2>{message}</CustomH2>
+                <CustomH2>
+                  {deleteError === "notFound" ? (
+                    `No tweet found with ID: ${tweetId}.`
+                  ) : (
+                    <span>
+                      Tweet with ID:{" "}
+                      <a
+                        style={{ color: "white" }}
+                        target='_blank'
+                        href={`https://twitter.com/${username}/status/${tweetId}`}
+                        rel='noreferrer'>
+                        {tweetId}
+                      </a>{" "}
+                      failed to delete.
+                    </span>
+                  )}
+                </CustomH2>
               </div>
             );
           })}
