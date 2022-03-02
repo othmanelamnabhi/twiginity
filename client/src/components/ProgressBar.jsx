@@ -5,20 +5,27 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { CustomH2 } from "./StyledComponents";
 import { Box } from "@mui/material";
+import SuccessScreen from "./SuccessScreen";
 import { useLayoutEffect, useRef } from "react";
 
 export default function ProgressBar({ tweetsProcessed, numberOfTweets, messages }) {
   const scrollToBottomRef = useRef();
   console.log(tweetsProcessed, numberOfTweets);
 
+  const done = tweetsProcessed === numberOfTweets;
+
   useLayoutEffect(() => {
     scrollToBottomRef.current?.scrollIntoView();
   });
   return (
     <>
-      <LinearProgressWithLabel
-        value={Math.round((tweetsProcessed / numberOfTweets) * 100)}
-      />
+      {done ? (
+        <SuccessScreen />
+      ) : (
+        <LinearProgressWithLabel
+          value={Math.round((tweetsProcessed / numberOfTweets) * 100)}
+        />
+      )}
 
       {messages.length > 0 ? (
         <Box

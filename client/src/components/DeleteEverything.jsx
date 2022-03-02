@@ -165,7 +165,6 @@ export default function DeleteEverything() {
               tweetsProcessed={state.increment}
               numberOfTweets={state.numberOfTweets}
               messages={state?.deleteError}
-              load
             />
           ) : null}
           {state?.error ? (
