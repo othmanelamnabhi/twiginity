@@ -15,7 +15,7 @@ import SimpleBackdrop from "./Backdrop";
 
 import { useAuth } from "./AuthProvider";
 
-import { deletionState, reducer } from "../../common/shared-state";
+import { deletionState, reducer } from "../common/shared-state";
 import ProgressBar from "./ProgressBar";
 import ErrorOrNoResults from "./ErrorOrNoResults";
 

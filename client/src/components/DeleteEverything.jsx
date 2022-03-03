@@ -14,7 +14,7 @@ import ProgressBar from "./ProgressBar";
 import { useAuth } from "./AuthProvider";
 import ErrorOrNoResults from "./ErrorOrNoResults";
 
-import { deletionState, reducer } from "../../common/shared-state";
+import { deletionState, reducer } from "../common/shared-state";
 
 export default function DeleteEverything() {
   const [state, setState] = useReducer(reducer, { ready: true });

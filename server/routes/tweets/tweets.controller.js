@@ -74,6 +74,7 @@ async function deleteRecentTweets(req, res) {
   try {
     let tweetsToBeDeleted = await client.v2.userTimeline(twitterId, {
       end_time: olderThan ? olderThan : undefined,
+      max_results: 100,
     });
 
     while (!tweetsToBeDeleted.done) {
