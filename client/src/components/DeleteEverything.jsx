@@ -14,51 +14,7 @@ import ProgressBar from "./ProgressBar";
 import { useAuth } from "./AuthProvider";
 import ErrorOrNoResults from "./ErrorOrNoResults";
 
-export const deletionState = {
-  processing: "processing",
-  deleting: "deleting",
-  queuing: "queuing",
-  error: "error",
-  noResults: "no results",
-  ready: "ready",
-};
-
-export function reducer(
-  state,
-  { type, tweetCount, message, deleteError, tweetId, username, increment, numberOfTweets }
-) {
-  switch (type) {
-    case deletionState.ready:
-      return { ready: true };
-    case deletionState.processing:
-      return { processing: true, tweetCount };
-    case deletionState.deleting:
-      console.log("deletionState.deleting old => ", state.deleteError);
-      console.log("deletionState.deleting new => ", deleteError);
-      let arrayOfErrors = state.deleteError !== undefined ? [...state.deleteError] : [];
-
-      if (deleteError !== undefined)
-        arrayOfErrors.push({ tweetId, deleteError, username });
-
-      return {
-        deleting: true,
-        increment: (state.increment ?? 0) + increment,
-        numberOfTweets,
-        deleteError: arrayOfErrors,
-      };
-    case deletionState.queuing:
-      return {}; // define data for this state
-    case deletionState.error:
-      return { error: true, message }; // define data for this state
-    case deletionState.noResults:
-      return {
-        noResults: true,
-      }; // define data for this state
-
-    default:
-      throw new Error();
-  }
-}
+import { deletionState, reducer } from "../../common/shared-state";
 
 export default function DeleteEverything() {
   const [state, setState] = useReducer(reducer, { ready: true });
@@ -67,8 +23,6 @@ export default function DeleteEverything() {
   let [searchParams] = useSearchParams();
 
   const isExpired = searchParams.get("session") === "expired";
-
-  console.log("DeleteEverything => ", state);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -97,12 +51,7 @@ export default function DeleteEverything() {
     if (!socket) return;
     socket.connect();
 
-    socket.on("connect", () => {
-      console.log("socket.io client connected! => ", socket.id);
-    });
-
     socket.on(deletionState.deleting, (data) => {
-      console.log("socket ID => ", socket.id);
       setState(data);
     });
 

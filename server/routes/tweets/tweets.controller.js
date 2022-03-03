@@ -76,13 +76,9 @@ async function deleteRecentTweets(req, res) {
       end_time: olderThan ? olderThan : undefined,
     });
 
-    // fetch all 3200 tweets
-    // set maximum number of tweets per request
-    await tweetsToBeDeleted.fetchNext();
-
-    // while (!tweetsToBeDeleted.done) {
-    //   await tweetsToBeDeleted.fetchNext();
-    // }
+    while (!tweetsToBeDeleted.done) {
+      await tweetsToBeDeleted.fetchNext();
+    }
 
     const {
       _realData: { data },

@@ -10,7 +10,6 @@ import { useLayoutEffect, useRef } from "react";
 
 export default function ProgressBar({ tweetsProcessed, numberOfTweets, messages }) {
   const scrollToBottomRef = useRef();
-  console.log(tweetsProcessed, numberOfTweets);
 
   const done = tweetsProcessed === numberOfTweets;
 

@@ -10,10 +10,7 @@ const deletionQueue = new Queue("deletion-queue", {
 deletionQueue.process(10, deletionProcess);
 
 const deleteTweetJob = async (data) => {
-  deletionQueue
-    .createJob(data)
-    .save()
-    .then(() => console.log("job added to queue"));
+  deletionQueue.createJob(data).save();
 };
 
 module.exports = { deleteTweetJob, deletionQueue };

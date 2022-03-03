@@ -15,7 +15,7 @@ import SimpleBackdrop from "./Backdrop";
 
 import { useAuth } from "./AuthProvider";
 
-import { deletionState, reducer } from "./DeleteEverything";
+import { deletionState, reducer } from "../../common/shared-state";
 import ProgressBar from "./ProgressBar";
 import ErrorOrNoResults from "./ErrorOrNoResults";
 
@@ -63,8 +63,6 @@ export default function DeleteRecentTweets() {
 
   const isExpired = searchParams.get("session") === "expired";
 
-  console.log("DeleteRecentTweets => ", state);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -85,7 +83,6 @@ export default function DeleteRecentTweets() {
         setState(response.data);
       })
       .catch((error) => {
-        console.log(error);
         if (error.response.status === 401) {
           return handleLogoutClick(undefined, true);
         }
@@ -101,12 +98,7 @@ export default function DeleteRecentTweets() {
     if (!socket) return;
     socket.connect();
 
-    socket.on("connect", () => {
-      console.log("socket.io client connected! => ", socket.id);
-    });
-
     socket.on(deletionState.deleting, (data) => {
-      console.log("socket ID => ", socket.id);
       setState(data);
     });
 

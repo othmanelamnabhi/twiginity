@@ -44,15 +44,19 @@ export function AuthProvider({ children }) {
   }, []);
 
   const socket = authenticated
-    ? io(`https://127.0.0.1:50000?twitterId=${twitterId}`, { autoConnect: false })
-    : null; // solve the proxying issue for socket.io
+    ? io({
+        autoConnect: false,
+        query: {
+          twitterId,
+        },
+      })
+    : null;
 
   const handleSignInClick = () => {
     window.open("/auth/twitter", "_self");
   };
 
   const handleLogoutClick = (e, expired = false) => {
-    console.log("expired ", expired);
     expired
       ? window.open(`/auth/logout?session=expired`, "_self")
       : window.open(`/auth/logout`, "_self");
@@ -86,14 +90,6 @@ export function RequireAuth({ children }) {
   let {
     authenticatedUser: { authenticated },
   } = useAuth();
-
-  // if (!authenticated) {
-  //   // Redirect them to the /login page, but save the current location they were
-  //   // trying to go to when they were redirected. This allows us to send them
-  //   // along to that page after they login, which is a nicer user experience
-  //   // than dropping them off on the home page.
-  //   return <Navigate to='/' />;
-  // }
 
   return authenticated === null ? null : authenticated ? children : <Navigate to='/' />;
 }

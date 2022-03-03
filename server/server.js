@@ -1,16 +1,16 @@
 require("dotenv").config();
 const fs = require("fs");
-const https = require("https");
+const http = require("http");
 const connectToDatabase = require("./helpers/dbConnection");
 const connectToRedis = require("./helpers/redisConnection");
 const { Server } = require("socket.io");
 
-const { HTTPS_OPTIONS, HTTPS_PORT } = require("./helpers/serverConfig");
+const { HTTPS_PORT } = require("./helpers/serverConfig");
 const app = require("./app");
 
-const httpsServer = https.createServer(HTTPS_OPTIONS, app);
+const httpServer = http.createServer(app);
 
-global.io = new Server(httpsServer, {
+global.io = new Server(httpServer, {
   cors: { origin: "*" },
 });
 
@@ -45,8 +45,8 @@ async function startServer() {
     //   console.log(`Example app listening at http://localhost:${HTTP_PORT}`);
     // });
 
-    httpsServer.listen(HTTPS_PORT, () => {
-      console.log(`Example app listening at https://localhost:${HTTPS_PORT}`);
+    httpServer.listen(HTTPS_PORT, () => {
+      console.log(`Twignity app listening at https://localhost:${HTTPS_PORT}`);
     });
   } catch (error) {
     console.error(error);

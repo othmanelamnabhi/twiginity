@@ -7,11 +7,8 @@ authRouter.get("/twitter", passport.authenticate("twitter"));
 authRouter.get("/logout", (req, res) => {
   const session = req.query.session;
   const isExpired = session === "expired";
-  console.log(isExpired);
   req.logout();
-  isExpired
-    ? res.redirect(`https://127.0.0.1:3000?session=expired`)
-    : res.redirect(`https://127.0.0.1:3000`);
+  isExpired ? res.redirect(`/?session=expired`) : res.redirect(`/`);
 });
 
 authRouter.get("/login/success", (req, res) => {
@@ -36,8 +33,8 @@ authRouter.get("/login/failed", (req, res) => {
 authRouter.get(
   "/twitter/redirect",
   passport.authenticate("twitter", {
-    successRedirect: "https://127.0.0.1:3000/delete-recent",
-    failureRedirect: "https://127.0.0.1:3000",
+    successRedirect: "/delete-recent",
+    failureRedirect: "/",
   })
 );
 
