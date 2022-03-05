@@ -4,7 +4,6 @@ const connectToDatabase = require("./helpers/dbConnection");
 redis = require("./helpers/redisConnection");
 const { Server } = require("socket.io");
 
-const { HTTPS_PORT } = require("./helpers/serverConfig");
 const app = require("./app");
 
 const httpServer = http.createServer(app);
@@ -29,8 +28,8 @@ async function startServer() {
     await connectToDatabase();
     await redis.connect();
 
-    httpServer.listen(HTTPS_PORT, () => {
-      console.log(`Twignity app listening at https://localhost:${HTTPS_PORT}`);
+    httpServer.listen(process.env.PORT, () => {
+      console.log(`Twignity app listening at https://localhost:${process.env.PORT}`);
       console.log(process.env.NODE_ENV);
     });
   } catch (error) {
