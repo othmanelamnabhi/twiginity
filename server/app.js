@@ -4,7 +4,7 @@ const cookieSession = require("cookie-session");
 const passport = require("passport");
 const cors = require("cors");
 const path = require("path");
-var secure = require("ssl-express-www");
+// var secure = require("ssl-express-www");
 
 require("./auth/twitter-api-authentication");
 
@@ -13,9 +13,9 @@ const authRouter = require("./routes/auth/auth.router");
 const tweetsRouter = require("./routes/tweets/tweets.router");
 const jobsRouter = require("./routes/jobs/jobs.router");
 
-if (process.env.NODE_ENV === "production") {
-  app.use(secure);
-}
+// if (process.env.NODE_ENV === "production") {
+//   app.use(secure);
+// }
 
 // Secure the app with Helmet
 app.use(
