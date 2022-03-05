@@ -1,5 +1,4 @@
 const express = require("express");
-const morgan = require("morgan");
 const helmet = require("helmet");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
@@ -13,10 +12,6 @@ const app = express();
 const authRouter = require("./routes/auth/auth.router");
 const tweetsRouter = require("./routes/tweets/tweets.router");
 const jobsRouter = require("./routes/jobs/jobs.router");
-
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("combined"));
-}
 
 if (process.env.NODE_ENV === "production") {
   app.use(secure);
