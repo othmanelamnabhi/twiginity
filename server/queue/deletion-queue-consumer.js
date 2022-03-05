@@ -14,8 +14,7 @@ const deletionProcess = async (
     accessSecret: tokens.accessTokenSecret,
   });
   try {
-    // await twitterClient.v1.deleteTweet(tweetId);
-    console.log(index + 1);
+    await twitterClient.v1.deleteTweet(tweetId);
     await awaitTimeout(1000);
     io.to(socketId).emit("deleting", {
       type: "deleting",

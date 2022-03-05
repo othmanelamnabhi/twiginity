@@ -71,19 +71,16 @@ async function deleteRecentTweets(req, res) {
   const keyword = req.body?.keyword?.toLowerCase();
   const tokens = req.user.tokens;
   const socketId = await redis.HGET("user", `${twitterId}`);
-  console.log(socketId);
 
   try {
     let tweetsToBeDeleted = await client.v2.userTimeline(twitterId, {
       end_time: olderThan ? olderThan : undefined,
-      max_results: 10,
+      max_results: 100,
     });
 
-    // while (!tweetsToBeDeleted.done) {
-    //   await tweetsToBeDeleted.fetchNext();
-    // }
-
-    await tweetsToBeDeleted.fetchNext();
+    while (!tweetsToBeDeleted.done) {
+      await tweetsToBeDeleted.fetchNext();
+    }
 
     const {
       _realData: { data },
