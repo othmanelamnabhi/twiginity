@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { TwitterApi } = require("twitter-api-v2");
 
-// const awaitTimeout = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+const awaitTimeout = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
 
 const deletionProcess = async (
   { data: { tweetId, tokens, twitterId, numberOfTweets, index, socketId, username } },
@@ -14,7 +14,9 @@ const deletionProcess = async (
     accessSecret: tokens.accessTokenSecret,
   });
   try {
-    await twitterClient.v1.deleteTweet(tweetId);
+    // await twitterClient.v1.deleteTweet(tweetId);
+    console.log(index + 1);
+    await awaitTimeout(1000);
     io.to(socketId).emit("deleting", {
       type: "deleting",
       numberOfTweets,

@@ -1,12 +1,3 @@
-const Redis = require("ioredis");
-global.redis = new Redis({ lazyConnect: true });
-
-async function connectToRedis() {
-  await redis.connect();
-}
-
-redis.once("connect", () => {
-  console.log("Connected to Redis");
+module.exports = require("redis").createClient({
+  url: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_URL}:${process.env.REDIS_PORT}`,
 });
-
-module.exports = connectToRedis;

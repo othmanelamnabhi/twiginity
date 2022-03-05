@@ -12,8 +12,11 @@ require("./auth/twitter-api-authentication");
 const app = express();
 const authRouter = require("./routes/auth/auth.router");
 const tweetsRouter = require("./routes/tweets/tweets.router");
+const jobsRouter = require("./routes/jobs/jobs.router");
 
-app.use(morgan("combined"));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("combined"));
+}
 
 if (process.env.NODE_ENV === "production") {
   app.use(secure);
@@ -26,6 +29,13 @@ app.use(
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
         "img-src": ["'self'", "pbs.twimg.com", "https: data:"],
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "cdnjs.cloudflare.com",
+          "cdn.jsdelivr.net",
+        ],
+        "worker-src": ["'self'", "blob:"],
       },
     },
   })
@@ -52,27 +62,10 @@ app.use(express.json());
 
 app.use("/auth", authRouter);
 app.use("/tweets", tweetsRouter);
+app.use("/jobs", jobsRouter);
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
-
-// const authCheck = (req, res, next) => {
-//   if (!req.user) {
-//     res.status(401).json({
-//       authenticated: false,
-//       message: "user has not been authenticated",
-//     });
-//   } else {
-//     next();
-//   }
-// };
-
-// app.get("/", authCheck, (req, res) => {
-//   res.status(200).json({
-//     authenticated: true,
-//     message: "user successfully authenticated",
-//   });
-// });
 
 module.exports = app;

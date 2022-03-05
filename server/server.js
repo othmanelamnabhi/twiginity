@@ -1,8 +1,7 @@
 require("dotenv").config();
-const fs = require("fs");
 const http = require("http");
 const connectToDatabase = require("./helpers/dbConnection");
-const connectToRedis = require("./helpers/redisConnection");
+redis = require("./helpers/redisConnection");
 const { Server } = require("socket.io");
 
 const { HTTPS_PORT } = require("./helpers/serverConfig");
@@ -14,20 +13,9 @@ global.io = new Server(httpServer, {
   cors: { origin: "*" },
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("new connection => ", socket.id, socket.handshake.query.twitterId);
-  redis.hset(
-    `user`,
-    `${socket.handshake.query.twitterId}`,
-    `${socket.id}`,
-    (err, result) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(result);
-      }
-    }
-  );
+  redis.HSET(`user`, `${socket.handshake.query.twitterId}`, `${socket.id}`);
 
   socket.on("disconnect", () => console.log("disconnected"));
 });
@@ -39,14 +27,11 @@ process.on("uncaughtException", function (err) {
 async function startServer() {
   try {
     await connectToDatabase();
-    await connectToRedis();
-
-    // server.listen(HTTP_PORT, () => {
-    //   console.log(`Example app listening at http://localhost:${HTTP_PORT}`);
-    // });
+    await redis.connect();
 
     httpServer.listen(HTTPS_PORT, () => {
       console.log(`Twignity app listening at https://localhost:${HTTPS_PORT}`);
+      console.log(process.env.NODE_ENV);
     });
   } catch (error) {
     console.error(error);

@@ -9,7 +9,14 @@ export default function SimpleBackdrop({ state }) {
       <Backdrop sx={{ color: "#fff" }} open={state.processing ? true : false}>
         <Stack justifyContent='center' alignItems='center' spacing={2}>
           <CircularProgress color='inherit' />
-          <CustomH2>{`Processing your ${state.tweetCount} tweets`}</CustomH2>
+          {state?.queuedTweets > 100 ? (
+            <>
+              <CustomH2>{`There are currently ${state.queuedTweets} tweets being processed.`}</CustomH2>
+              <CustomH2>{`You can safely close this window, we'll get to yours.`}</CustomH2>
+            </>
+          ) : (
+            <CustomH2>{`Processing your ${state.tweetCount} tweets`}</CustomH2>
+          )}
         </Stack>
       </Backdrop>
     </div>

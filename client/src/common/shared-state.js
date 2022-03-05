@@ -9,13 +9,23 @@ export const deletionState = {
 
 export function reducer(
   state,
-  { type, tweetCount, message, deleteError, tweetId, username, increment, numberOfTweets }
+  {
+    type,
+    tweetCount,
+    message,
+    deleteError,
+    tweetId,
+    username,
+    increment,
+    numberOfTweets,
+    queuedTweets,
+  }
 ) {
   switch (type) {
     case deletionState.ready:
       return { ready: true };
     case deletionState.processing:
-      return { processing: true, tweetCount };
+      return { processing: true, tweetCount, queuedTweets };
     case deletionState.deleting:
       let arrayOfErrors = state.deleteError !== undefined ? [...state.deleteError] : [];
 

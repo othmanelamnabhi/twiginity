@@ -3,6 +3,7 @@ const fs = require("fs");
 const replace = require("stream-replace-string");
 const fl = require("firstline");
 const { deleteTweetJob, deletionQueue } = require("../../queue/deletion-queue");
+redis = require("../../helpers/redisConnection");
 
 function addArrayOfTweetsToJobQueue(
   arrayOfTweets,
@@ -69,17 +70,20 @@ async function deleteRecentTweets(req, res) {
   const username = req.user.username;
   const keyword = req.body?.keyword?.toLowerCase();
   const tokens = req.user.tokens;
-  const socketId = await redis.hget("user", `${twitterId}`);
+  const socketId = await redis.HGET("user", `${twitterId}`);
+  console.log(socketId);
 
   try {
     let tweetsToBeDeleted = await client.v2.userTimeline(twitterId, {
       end_time: olderThan ? olderThan : undefined,
-      max_results: 100,
+      max_results: 10,
     });
 
-    while (!tweetsToBeDeleted.done) {
-      await tweetsToBeDeleted.fetchNext();
-    }
+    // while (!tweetsToBeDeleted.done) {
+    //   await tweetsToBeDeleted.fetchNext();
+    // }
+
+    await tweetsToBeDeleted.fetchNext();
 
     const {
       _realData: { data },
@@ -106,9 +110,13 @@ async function deleteRecentTweets(req, res) {
       deleteTweetJob
     );
 
-    return res
-      .status(202)
-      .json({ type: "processing", tweetCount: tweetsToBeDeleted.length });
+    const { waiting: queuedTweets } = await deletionQueue.checkHealth();
+
+    return res.status(202).json({
+      type: "processing",
+      tweetCount: tweetsToBeDeleted.length,
+      queuedTweets: queuedTweets > 0 ? queuedTweets : null,
+    });
   } catch (error) {
     return res.status(error.code ?? 500).json({ type: "error", message: error.message });
   }
@@ -141,7 +149,7 @@ async function deleteTweetJs(req, res, next) {
   const client = req.twitterClient;
   const username = req.user.username;
   const twitterId = req.user.twitterId;
-  const socketId = await redis.hget("user", `${twitterId}`);
+  const socketId = await redis.HGET("user", `${twitterId}`);
   const tokens = req.user.tokens;
 
   const uneditedTweetJsFile = path.join(

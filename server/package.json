@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "watch": "nodemon server.js"
+    "watch": "nodemon server.js",
+    "buildSRS": "node ./helpers/buildSRS.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bee-queue": "^1.4.0",
+    "bull-arena": "^3.29.3",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -20,10 +22,11 @@
     "express-fileupload": "^1.2.1",
     "firstline": "^2.0.2",
     "helmet": "^4.6.0",
-    "ioredis": "^4.28.5",
     "mongoose": "^6.1.6",
     "passport": "^0.5.2",
     "passport-twitter": "^1.0.4",
+    "redis": "^4.0.4",
+    "rollup": "^2.69.0",
     "socket.io": "^4.4.1",
     "ssl-express-www": "^3.0.8",
     "stream-replace-string": "^1.1.0",
