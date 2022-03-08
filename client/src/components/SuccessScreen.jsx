@@ -1,8 +1,9 @@
 import { Stack, Container } from "@mui/material";
-import { CustomH2 } from "./StyledComponents";
+import { CustomH2, CustomButton } from "./StyledComponents";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ReplayIcon from "@mui/icons-material/Replay";
 
-export default function SuccessScreen() {
+export default function SuccessScreen({ setState, setLoading }) {
   return (
     <Container sx={{ display: "flex", justifyContent: "center" }}>
       <Stack spacing={2} sx={{ alignItems: "center" }}>
@@ -22,6 +23,16 @@ export default function SuccessScreen() {
           }}>
           All your tweets have been processed.
         </CustomH2>
+        <CustomButton
+          variant='contained'
+          startIcon={<ReplayIcon />}
+          onClick={() => {
+            setState({ type: "ready" });
+            setLoading(false);
+          }}
+          sx={{ width: "fit-content" }}>
+          Try again ?
+        </CustomButton>
       </Stack>
     </Container>
   );

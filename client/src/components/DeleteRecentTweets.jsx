@@ -187,6 +187,8 @@ export default function DeleteRecentTweets() {
               messages={state?.deleteError}
               tweetsProcessed={state.increment}
               numberOfTweets={state.numberOfTweets}
+              setLoading={setLoading}
+              setState={setState}
             />
           ) : null}
           {state?.error || state?.noResults ? (

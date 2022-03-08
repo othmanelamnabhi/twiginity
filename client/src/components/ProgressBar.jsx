@@ -8,7 +8,13 @@ import { Box } from "@mui/material";
 import SuccessScreen from "./SuccessScreen";
 import { useLayoutEffect, useRef } from "react";
 
-export default function ProgressBar({ tweetsProcessed, numberOfTweets, messages }) {
+export default function ProgressBar({
+  tweetsProcessed,
+  numberOfTweets,
+  messages,
+  setLoading,
+  setState,
+}) {
   const scrollToBottomRef = useRef();
 
   const done = tweetsProcessed === numberOfTweets;
@@ -19,7 +25,7 @@ export default function ProgressBar({ tweetsProcessed, numberOfTweets, messages 
   return (
     <>
       {done ? (
-        <SuccessScreen />
+        <SuccessScreen setLoading={setLoading} setState={setState} />
       ) : (
         <LinearProgressWithLabel
           value={Math.round((tweetsProcessed / numberOfTweets) * 100)}

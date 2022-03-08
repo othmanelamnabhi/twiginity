@@ -15,7 +15,7 @@ export default function SimpleBackdrop({ state }) {
               <CustomH2>{`You can safely close this window, we'll get to yours.`}</CustomH2>
             </>
           ) : (
-            <CustomH2>{`Processing your ${state.tweetCount} tweets`}</CustomH2>
+            <CustomH2>{`Processing your ${state.tweetCount} tweet(s)`}</CustomH2>
           )}
         </Stack>
       </Backdrop>
