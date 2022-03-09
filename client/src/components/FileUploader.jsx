@@ -21,6 +21,13 @@ export const FileUploader = () => {
       maxFileSize='100MB'
       files={files}
       acceptedFileTypes={["text/javascript"]}
+      fileValidateTypeDetectType={(source, type) =>
+        new Promise((resolve, reject) => {
+          if (/\.js$/.test(source.name)) {
+            return resolve("text/javascript");
+          }
+        })
+      }
       fileValidateTypeLabelExpectedTypes='Expects a .js file'
       allowPaste={false}
       onupdatefiles={setFiles}
