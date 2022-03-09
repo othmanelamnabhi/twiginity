@@ -9,7 +9,7 @@
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "start": "npm start --prefix server",
     "build": "npm run build --prefix client",
-    "heroku-postbuild": "npm install --prefix client && npm install --prefix server && npm run buildSRS --prefix server && npm run build --prefix client"
+    "heroku-postbuild": "npm install --prefix client && npm install --prefix server && npm run build --prefix client"
   },
   "cacheDirectories": [
     "client/node_modules",

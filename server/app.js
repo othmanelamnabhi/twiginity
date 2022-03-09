@@ -49,9 +49,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors());
-
-const publicPath = path.join(__dirname, "build");
-app.use(express.static(publicPath));
+if (process.env.NODE_ENV === "production") {
+  const publicPath = path.join(__dirname, "build");
+  app.use(express.static(publicPath));
+}
 
 app.use(express.json());
 
@@ -59,8 +60,10 @@ app.use("/auth", authRouter);
 app.use("/tweets", tweetsRouter);
 app.use("/jobs", jobsRouter);
 
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+if (process.env.NODE_ENV === "production") {
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+  });
+}
 
 module.exports = app;

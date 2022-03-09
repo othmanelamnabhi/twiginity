@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const replace = require("stream-replace-string");
+const lineReplace = require("line-replace");
 const fl = require("firstline");
 const { deleteTweetJob, deletionQueue } = require("../../queue/deletion-queue");
 redis = require("../../helpers/redisConnection");
@@ -29,38 +29,29 @@ function addArrayOfTweetsToJobQueue(
   }
 }
 
-const streamToFile = (inputStream, filePath) => {
+const replaceFirstLine = (file, replacementString) => {
   return new Promise((resolve, reject) => {
-    const fileWriteStream = fs.createWriteStream(filePath);
-    inputStream
-      .pipe(replace("window.YTD.tweet.part0 = ", "module.exports = "))
-      .pipe(fileWriteStream)
-      .on("finish", resolve)
-      .on("error", reject);
+    lineReplace({
+      file,
+      line: 1,
+      text: replacementString,
+      addNewLine: true,
+      callback: ({ file, line, text, replacedText, error }) => {
+        if (error) return reject(error);
+        resolve(replacedText);
+      },
+    });
   });
 };
 
-function deleteFile(twitterId, { edited = true } = {}) {
-  fs.rm(
-    path.join(
-      __dirname,
-      "..",
-      "..",
-      "tmp",
-      twitterId + `${edited ? ".js" : "-tweet.js"}`
-    ),
-    (err) => {
-      if (err) {
-        console.error(err.message);
-        return;
-      }
-      console.log(
-        `${new Date().toISOString()} ${twitterId}${
-          edited ? ".js" : "-tweet.js"
-        } File deleted successfully`
-      );
+function deleteFile(fileToBeDeleted) {
+  fs.rm(fileToBeDeleted, (err) => {
+    if (err) {
+      console.error(err.message);
+      return;
     }
-  );
+    console.log(`${new Date().toISOString()} File deleted successfully`);
+  });
 }
 
 async function deleteRecentTweets(req, res) {
@@ -149,49 +140,28 @@ async function deleteTweetJs(req, res, next) {
   const socketId = await redis.HGET("user", `${twitterId}`);
   const tokens = req.user.tokens;
 
-  const uneditedTweetJsFile = path.join(
-    __dirname,
-    "..",
-    "..",
-    "tmp",
-    twitterId + "-tweet.js"
-  );
+  const tweetJsFile = path.join(__dirname, "..", "..", "tmp", twitterId + "-tweet.js");
 
   try {
     // test if tokens are still valid
     await client.v2.me({ expansions: ["pinned_tweet_id"] });
 
-    if (!fs.existsSync(uneditedTweetJsFile))
+    if (!fs.existsSync(tweetJsFile))
       return res.status(400).send({
         type: "error",
         message: "tweet.js file not found, please upload it again",
       });
 
-    const tweetJsReadStream = fs.createReadStream(
-      path.join(__dirname, "..", "..", "tmp", twitterId + "-tweet.js")
-    );
+    const FirstLineOfTweetJs = await fl(tweetJsFile);
 
-    const pathTweetJsWriteStream = path.join(
-      __dirname,
-      "..",
-      "..",
-      "tmp",
-      twitterId + ".js"
-    );
-
-    const FirstLineOfTweetJs = await fl(
-      path.join(__dirname, "..", "..", "tmp", twitterId + "-tweet.js")
-    );
     if (!FirstLineOfTweetJs.includes("window.YTD.tweet.part0 = "))
       throw new Error(
         "Something is wrong with the file, please check you uploaded the right one."
       );
 
-    await streamToFile(tweetJsReadStream, pathTweetJsWriteStream);
+    await replaceFirstLine(tweetJsFile, "module.exports = [");
 
-    deleteFile(twitterId, { edited: false });
-
-    const tweets = require(`../../tmp/${twitterId}`);
+    const tweets = require(`../../tmp/${twitterId}-tweet`);
 
     addArrayOfTweetsToJobQueue(
       tweets,
@@ -201,10 +171,11 @@ async function deleteTweetJs(req, res, next) {
       socketId,
       deleteTweetJob
     );
-    deleteFile(twitterId);
+    deleteFile(tweetJsFile);
 
     return res.status(202).json({ type: "processing", tweetCount: tweets.length });
   } catch (error) {
+    console.log(error);
     return res.status(error.code ?? 500).json({ type: "error", message: error.message });
   }
 }

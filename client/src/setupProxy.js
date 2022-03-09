@@ -4,7 +4,7 @@ module.exports = function (app) {
   app.use(
     "/auth",
     createProxyMiddleware({
-      target: "https://127.0.0.1:50000/",
+      target: "http://127.0.0.1:50000/",
       changeOrigin: true,
       secure: false,
     })
@@ -12,18 +12,9 @@ module.exports = function (app) {
   app.use(
     "/tweets",
     createProxyMiddleware({
-      target: "https://127.0.0.1:50000/",
+      target: "http://127.0.0.1:50000/",
       changeOrigin: true,
       secure: false,
     })
   );
-
-  // app.use(
-  //   createProxyMiddleware("/websocket.io", {
-  //     // <-- notice the pattern is not in use but in the proxy method
-  //     target: "https://localhost:5001",
-  //     ws: true,
-  //     changeOrigin: true,
-  //   })
-  // );
 };

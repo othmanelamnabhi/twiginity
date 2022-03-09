@@ -6,8 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "watch": "nodemon server.js",
-    "buildSRS": "node ./helpers/buildSRS.js"
+    "watch": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -22,14 +21,12 @@
     "express-fileupload": "^1.2.1",
     "firstline": "^2.0.2",
     "helmet": "^4.6.0",
+    "line-replace": "^2.0.1",
     "mongoose": "^6.1.6",
     "passport": "^0.5.2",
     "passport-twitter": "^1.0.4",
     "redis": "^4.0.4",
-    "rollup": "^2.69.0",
     "socket.io": "^4.4.1",
-    "ssl-express-www": "^3.0.8",
-    "stream-replace-string": "^1.1.0",
     "twitter-api-v2": "^1.9.1"
   },
   "devDependencies": {
