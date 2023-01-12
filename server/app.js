@@ -4,7 +4,8 @@ const cookieSession = require("cookie-session");
 const passport = require("passport");
 const cors = require("cors");
 const path = require("path");
-// var secure = require("ssl-express-www");
+var secure = require("ssl-express-www");
+const morgan = require("morgan");
 
 require("./auth/twitter-api-authentication");
 
@@ -13,9 +14,11 @@ const authRouter = require("./routes/auth/auth.router");
 const tweetsRouter = require("./routes/tweets/tweets.router");
 const jobsRouter = require("./routes/jobs/jobs.router");
 
-// if (process.env.NODE_ENV === "production") {
-//   app.use(secure);
-// }
+app.use(morgan("combined"));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(secure);
+}
 
 // Secure the app with Helmet
 app.use(
@@ -49,10 +52,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors());
-if (process.env.NODE_ENV === "production") {
-  const publicPath = path.join(__dirname, "build");
-  app.use(express.static(publicPath));
-}
+// if (process.env.NODE_ENV === "production") {
+const publicPath = path.join(__dirname, "build");
+app.use(express.static(publicPath));
+// }
 
 app.use(express.json());
 
@@ -60,10 +63,10 @@ app.use("/auth", authRouter);
 app.use("/tweets", tweetsRouter);
 app.use("/jobs", jobsRouter);
 
-if (process.env.NODE_ENV === "production") {
-  app.get("/*", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
-  });
-}
+// if (process.env.NODE_ENV === "production") {
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+// }
 
 module.exports = app;
