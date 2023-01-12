@@ -8,8 +8,7 @@
     "server": "cd server && npm run watch",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "start": "npm start --prefix server",
-    "build": "npm run build --prefix client",
-    "postbuild": "npm install --prefix client && npm install --prefix server && npm run build --prefix client"
+    "build": "npm install --prefix client && npm install --prefix server && npm run build --prefix client"
   },
   "cacheDirectories": [
     "client/node_modules",
